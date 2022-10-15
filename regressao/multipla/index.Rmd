@@ -1,0 +1,919 @@
+---
+title: "Análise de Regressão"
+author: "João Ricardo F. de Lima"
+date: "`r format(Sys.time(), '%d de %B de %Y.')`"
+output: 
+    html_document:
+        theme: flatly
+        number_sections: yes
+        keep_tex: yes
+        highlight: textmate
+#        includes: 
+#          in_header: "header.html"
+        toc: yes
+        toc_float:
+          collapsed: yes
+          smooth_scroll: yes 
+    bookdown::html_document2: default
+---
+
+<br>
+
+# Modelo de Regressão Múltipla
+
+<br>
+
+## Estimação dos betas por MQO
+
+<br>
+
+O modelo de regressão com $k>2$ variáveis é conhecido como **modelo de regressão múltipla**. O **modelo de regressão múltipla** é uma extensão do modelo de regressão simples. Contudo, as fórmulas matemáticas usadas para calcular $\hat \beta_1$ e $\hat \beta_2$ no modelo simples nao podem ser usadas no modelo múltiplo.
+
+Uma forma fácil de se trabalhar com modelos de regressão múltipla é usando algebra matricial. A maior vantagem é que a solução para se estimar os coeficientes pode ser usado para simples e múltipla com qualquer número de variáveis explicativas.
+
+Para se obter a solução do estimador de $\beta$ na forma matricial, inicialmente se escreve a função de regressão com k-variáveis:
+
+$$
+Y_i=\hat \beta_1+ \hat \beta_2 X_{2i}+\hat \beta_3 X_{3i}+ \dots+\hat \beta_k X_{ki}+ \hat u_i
+$$
+
+que pode ser escrito na forma matricial: com Y sendo um vetor coluna nx1; X uma matriz nxk; $\hat \beta$ um vetor coluna kx1 e o termo estocástico um vetor coluna nx1.
+
+Os estimadores de MQO são obtidos pela minimização de:
+
+$$
+\sum \hat u_i^2= \sum(Y_i- \hat \beta_1 - \hat \beta_2 X_{2i}- \dots -\hat \beta_k X_{ki})^2
+\tag{3}
+$$
+
+com $\sum \hat u_i^2$ sendo a soma de quadrados dos resíduos. Matricialmente, a soma do quadrados dos resíduos é dada por $\hat u' \hat u$. A partir de (2), obtem-se
+
+$$
+\hat u=Y - X\hat \beta
+$$
+
+Assim: 
+
+$$
+\sum \hat u_i^2 = \hat u'\hat u=(Y-X\hat \beta)'(Y-X\hat \beta)
+$$
+
+
+$$
+=Y'Y-Y'X\hat \beta-\hat \beta' X'Y+ \hat \beta' X'X \hat \beta
+$$
+
+dado que $Y'X\hat \beta$ é um escalar, é igual a sua transposta $\hat \beta'X'Y$. O último termo é a forma quadrática dos elementos de $\beta$. Então,  
+
+
+$$
+\hat u'\hat u=Y'Y-2\hat \beta'X'Y+\hat \beta' X'X \hat \beta
+$$
+
+que é a função que desejamos minimizar. Para encontrar o ponto de ótimo, deve-se derivar a função e igualá-la a zero.
+
+$$
+\frac {\partial \hat u'\hat u}{\partial \hat \beta}=-2X'Y+2X'X\hat \beta=0
+\tag{4}
+$$
+
+$$
+X'X\hat \beta=X'Y
+\tag{5}
+$$ 
+
+multiplicando os 2 lados por $(X'X)^{-1}$
+
+$$
+(X'X)^{-1}X'X\hat \beta=(X'X)^{-1}X'Y
+\tag{6}
+$$ 
+
+tem-se
+
+$$
+\hat \beta=(X'X)^{-1}X'Y
+\tag{7}
+$$ 
+
+<br>
+
+## Demonstração no R - Modelos de Regressão Múltipla
+
+``` {r multi1, warning=FALSE, message=FALSE}
+library(wooldridge)
+# Carrega a base 'wage2'
+data(wage2)
+# Remove os valores ausentes (NAs)
+sal <- na.omit(wage2)
+
+# Dimensão da base (# linhas  # colunas)
+dim(sal)
+
+# Descrição da base
+str(sal)
+
+attach(sal)
+```
+
+O Modelo proposto para ser estimado é:
+
+$$
+log(wage)= \beta_0 +\beta_1 educ + \beta_2 exper + \beta_3exper^2+ \beta_4 tenure + u
+$$
+onde:
+
+lwage = o logaritmo natural do salário
+
+educ = anos de educação
+
+exper = anos de experiência (trabalhando)
+
+tenure = anos trabalhando com o empregador atual
+
+<br> 
+	
+``` {r multi7, warning=FALSE, message=FALSE}
+#Pacote 
+library(tseries)
+
+#Estimando a 1 Regressão Multipla Modelo Irrestrito
+
+reg1 <- lm(log(wage) ~ educ + exper + I(exper^2) + tenure, data=sal)
+summary(reg1)
+
+#Testes de Normalidade
+jarque.bera.test(reg1$residuals)
+
+
+#Estimando a 1 Regressão Multipla Modelo Restrito
+
+regrest1 <- lm(log(wage) ~ educ  + tenure, data=sal)
+summary(regrest1)
+
+#Regressão com variáveis em log
+reg2<-lm(log(wage) ~ educ + log(exper) + tenure, data=sal)
+summary(reg2)
+
+jarque.bera.test(reg2$residuals)
+```
+
+
+``` {r multi8, warning=FALSE, message=FALSE}
+data("econmath")
+summary(econmath)
+
+#Estimação do modelo 
+reg3<-lm(score ~ study + age + actmth, data=econmath)
+summary(reg3)
+
+#Teste de Normalidade
+shapiro.test(reg3$residuals)
+
+#Estimação do modelo com variáveis transformadas
+reg4<-lm(score~study+log(age)+log(actmth), data=econmath)
+summary(reg4)
+
+#Teste de Normalidade
+shapiro.test(reg4$residuals)
+```
+
+``` {r multi9, warning=FALSE, message=FALSE}
+data("crime2")
+
+#Estimação do modelo 
+reg5 <- lm(crimes ~ pop + unem + officers + pcinc, data=crime2)
+summary(reg5)
+
+#Verificação dos Resíduos
+qqnorm(reg5$residuals)
+qqline(reg5$residuals)
+
+#Teste de Normalidade
+shapiro.test(reg4$residuals)
+
+#Estimação do modelo com variáveis transformadas
+reg6<-lm(log(crimes)~log(pop)+log(unem)+log(officers)+log(pcinc), data=crime2)
+summary(reg6)
+
+#Verificação dos Resíduos
+qqnorm(reg6$residuals)
+qqline(reg6$residuals)
+
+#Teste de Normalidade
+shapiro.test(reg6$residuals)
+```
+
+# Quebra de Pressupostos do Modelo Clássico de Regressão Linear
+
+<br>
+
+## Multicolinearidade
+
+<br>
+
+Uma das premissas do Modelo Clássico de Regressão Linear é que não existe **multicolinearidade** entre as variáveis explicativas no modelo de regressão a ser estimado. Originalmente, **multicolinearidade** designava a existência de uma "relação perfeita" entre algumas ou todas as variáveis explicativas de um modelo de regressão. Atualmente, também é considerado o caso de **multicolinearidade** menos que perfeita.
+
+<br>
+
+```{r multi10, warning=FALSE, message=FALSE}
+x1 <- c(10,15,18,24,30)
+x2 <- c(50,75,90,120,150)
+x3 <- c(52,75,97,129,152)
+x <- cbind(x1,x2,x3)
+cor(x)
+```
+
+<br>
+
+A correlação entre $X_1$ e $X_2$ é igual a 1. A correlação entre $X_1$ e $X_3$ é 0,995. No primeiro caso se tem perfeita correlação. Se fosse estimar um modelo de regressão com estas duas variáveis explicativas, $X_1$ e $X_2$, teriamos um caso de multicolinearidade perfeita e os betas não seriam estimáveis. A demonstração é dada em Gujarati \& Porter (2009).
+
+<br>
+
+A título de exemplo, se pode observar com a matrix X abaixo:
+
+<br>
+
+$$
+\mathbf{X}=\left[\begin{array}{ccc}
+                1 & 10 & 50  \\
+                1 & 15 & 75 \\
+                1 & 18 & 90  \\
+                \end{array} \right]; \mathbf{X'X}=\left[\begin{array}{ccc}
+                                                        3 & 43 & 215  \\
+                                                        43 & 649 & 3245 \\
+                                                        215 & 3245 & 16225  \\
+                                                        \end{array} \right]
+$$
+
+<br>
+
+sendo o determinante desta matriz igual a zero $|\mathbf{X'X}|=0$.
+
+<br>
+
+```{r multi11, warning=FALSE, message=FALSE}
+x1 <- c(1,1,1)
+x2 <- c(10,15,18)
+x3 <- c(50,75,90)
+x <- cbind(x1,x2,x3)
+
+x <- as.matrix(x)
+
+# X'X
+m1 <- t(x) %*% x
+
+m1
+
+# Determinante
+
+det(m1)
+```
+
+<br>
+
+A colinearidade se refere às relações lineares entre as variáveis explicativas. Não inclui relações não lineares, como por exemplo:
+
+<br>
+
+$$
+Y_i=\beta_0+\beta_1X+\beta_2X^2+\beta_3X^3
+$$
+
+<br>
+
+em que Y é o custo total e X a quantidade produzida
+
+<br>
+
+## Consequências da multicolinearidade
+
+<br>
+
+Os estimadores de MQO continuam não viesados e eficientes (possuem variância mínima).
+
+Contudo, esta variância é "inflada", ou seja, muito grande.
+
+Se o erro padrão é grande, os intervalos de confiança também serão mais amplos:
+
+<br>
+
+$$
+IC=\hat\beta\pm t_{\alpha/2}ep(\hat \beta)
+$$
+
+<br>
+
+Como o erro padrão é grande, normalmente os betas são não significativos, ou seja, iguais a zero.
+
+O $R^2$ tende a ser muito alto.
+ 
+Os estimadores de MQO e os erros-padrões podem ser sensíveis às pequenas mudanças nos dados.
+ 
+Em resumo, os resultados encontrados se tornam duvidosos quando se regride com regressores colineares.
+
+<br>
+
+## Como detectar a multicolinearidade?
+
+<br>
+
+Na regressão, encontrar muitos betas estimados não significativos e o $R^2$ muito alto.
+
+Altos valores de correlações entre pares de regressores;
+
+Calcular regressões auxiliares. Dado o modelo: 
+
+<br>
+
+$$
+Y_i=\beta_0+\beta_1X_1+\beta_2X_2+\beta_3X_3+u
+$$
+
+<br>
+
+calcular o $R^2$ e chamar de $R^2$ geral. Depois regredir:
+
+<br>
+
+$$
+X_1=\beta_0+\beta_2X_2+\beta_3X_3+u
+$$
+
+$$
+X_2=\beta_0+\beta_1X_1+\beta_3X_3+u
+$$
+
+$$
+X_3=\beta_0+\beta_1X_1+\beta_2X_2+u
+$$
+<br>
+
+calcular em cada regressão auxiliar os $R^2$: a) $R^2_{x_2.x_3x_4}$; b) $R^2_{x_3.x_2x_4}$; c) $R^2_{x_4.x_2x_3}$
+
+<br>
+
+comparar cada um com o $R^2$ geral. Pela *Regra Prática de Klein*, a multicolinearidade é um problema sério se o $R^2$ obtido em todas as regressões auxiliares for maior que o $R^2$ geral.
+
+<br>
+
+**Fator de Inflação de Variância** - Considerando uma regressão múltipla com duas variáveis explicativas, as variâncias dos coeficientes de inclinação são dadas por: 
+
+<br>
+
+$$
+Var(\hat\beta_2)=\frac{\sigma^2}{\sum x^2_2(1-r^2_{23})}
+$$
+
+$$
+Var(\hat\beta_3)=\frac{\sigma^2}{\sum x^2_3(1-r^2_{23})}
+$$
+
+<br>
+
+em que $\sigma^2$ é a variância do termo de erro e $r^2_{23}$ é o coeficiente de correlação entre $x_2$ e $x_3$.
+
+se considerarmos a razão $\frac{1}{1-r^2_{23}}$, esta mensura o grau na qual a variância do estimador de MQO é inflado devido a colinearidade. Este fator é conhecido como **FIV** (Fator de Inflação de Variância).
+
+Se o FIV for maior do que 10 diz-se que esta variável é altamente colinear;
+ Com mais de 2 variáveis, o quadrado do coeficiente de correlação pode ser obtido do $R^2$ das regressões auxiliares. 
+
+<br>
+
+## Medidas corretivas para Multicolinearidade
+
+<br>
+
+1) Aumentar o tamanho da amostra;
+
+2) Exclusão de variáveis, desde que não cause viés de especificação ou omissão de variável relevante.
+
+<br>
+
+## Multicolinearidade: Exemplo no R
+
+<br>
+
+### Estimação do Modelo
+
+```{r multi12, warning=FALSE, message=FALSE}
+#Inicio do Script
+#Pacotes a serem utilizados
+library(car)
+library(corrplot)
+library(HH)
+library(lmtest)
+library(sandwich)
+
+#Regressao Multipla
+#tenure= anos no emprego atual
+regressao1 <- lm(log(wage) ~ educ + log(exper) + tenure, data=sal)
+summary(regressao1)
+```
+
+<br>
+
+### Início da análise: verificação da correlação
+
+```{r multi13, warning=FALSE, message=FALSE}
+#Matriz de Correlacoes das variaveis explicativas
+x <- wage1[, c(2,3,4)]
+cor(x)
+corrplot(cor(x), order="hclust", tl.col="black", tl.cex = .75)
+```
+
+<br>
+
+### Estimação das regressões auxiliares
+```{r multi14, warning=FALSE, message=FALSE}
+#Regressoes Auxiliares
+
+aux1 <- lm(educ ~ exper + tenure)
+summary(aux1)
+
+aux2 <- lm(exper~ educ + tenure)
+summary(aux2)
+
+aux3 <- lm(tenure ~ educ + exper)
+summary(aux3)
+```
+
+<br>
+
+### Cálculo do Fator de Inflação da Variância
+
+```{r multi15, warning=FALSE, message=FALSE}
+#Fator de Inflacao da Variancia (FIV)
+vif(regressao1)
+```
+
+### Uso do pacote {performance}
+
+```{r multi16, warning=FALSE, message=FALSE, fig.width=10, fig.height=16}
+
+pacman::p_load(
+"performance",
+"lme4",
+"see",
+"qqplotr"
+)
+
+model_performance(regressao1)
+
+check_model(regressao1)
+```
+
+<br>
+
+## Heterocedasticidade
+
+<br>
+
+Ocorre quando a variância do termo de erro não é constante $(\sigma^2_i)$. As fontes principais são: presença de *outliers*, modelo incorretamente especificado, assimetria na distribuição de um ou mais regressores e erros de digitação dos dados. 
+
+É mais comum em dados de seção cruzada.
+
+
+Com as relação às propriedades dos estimadores de MQO, na presença de **heterocedasticidade** continuam não-viesados e consistentes, mas não são mais eficientes. O estimador eficiente, ou seja, com variância mínima é o de Mínimos Quadrados Generalizados (MQG).
+
+<br>
+
+## Consequências da Heterocedasticidade
+
+<br>
+
+O uso do método de MQO na presença de **heterocedasticidade** leva a resultados incorretos das significâncias (Testes t e F), levando a conclusões e inferências que podem estar equivocadas.
+ 
+<br>
+
+## Como detectar a Heterocedasticidade?
+
+<br>
+
+
+Sempre uma boa análise gráfica dos resíduos é importante. Contudo, existem testes formais para análise de heterocedasticidade. Os principais são os de White e Breusch-Pagan-Godfrey (BPG).
+
+<br>
+
+
+## Exemplo no R
+
+<br>
+
+```{r multi17, warning=FALSE, message=FALSE, fig.width=8, fig.height=6}
+#Regressao Multipla
+regressao1 <- lm(log(wage) ~ urban + married
+                 + educ + exper, data=sal)
+summary(regressao1)
+
+#Teste de Normalidade dos residuos
+jarque.bera.test(regressao1$residuals)
+shapiro.test(regressao1$residuals)
+
+#Analise de Multicolinearidade
+#Matriz de Correlacoes das variaveis explicativas
+x <- sal[, c(5,6,9,12)]
+cor(x)
+corrplot(cor(x), order="hclust", tl.col="black", tl.cex = .75)
+
+#Calculo do Fator de Inflacao da Variancia
+vif(lm(log(wage) ~ urban + married + educ + exper, data=sal))
+```
+
+<br>
+
+### Verificação dos resíduos
+
+<br>
+
+```{r multi18, warning=FALSE, message=FALSE, fig.width=8, fig.height=6}
+#Analise dos residuos do modelo
+par(mfrow=c(2,2))
+plot(regressao1)
+
+#Salvando os residuos do modelo e os valores estimados
+resid_sq <- (regressao1$residuals)^2
+ajustados1 <- regressao1$fitted.values
+par(mfrow=c(1,1))
+plot(ajustados1, resid_sq)
+```
+
+<br>
+
+### Heterocedasticidade: teste de White
+
+<br>
+
+A **hipótese nula** do Teste de White é os **resíduos são homocedásticos**. Após a regressão, pegar os resíduos ao quadrado e estimar contra os regressores e estes ao quadrado. é possível incluir produtos cruzados também. A estatística de teste $nR^2$ segue uma distribuição de qui-quadrado com graus de liberdade igual ao numero de parâmetros estimados. É um teste para grandes amostras.
+
+<br>
+
+```{r multi19, warning=FALSE, message=FALSE, fig.width=8, fig.height=6}
+#Testes de Heterocedasticidade de White
+#Caso especial do BPG
+#H0: Residuos sao homocedasticos.
+regres_white <- lm(log(wage) ~ urban + married
+                 + educ + exper + I(educ^2) + I(exper^2), data=sal)
+bptest(regres_white) 
+```
+
+<br>
+
+### Heterocedasticidade: teste de BPG 
+
+<br>
+
+Semelhante ao Teste de White, mas os resíduos ao quadrado são estimados no teste BPG contra os regressores originais apenas. Na estatística de teste é possível usar o valor do F ou então o $R^2$ multiplicado pelo tamanho da amostra "n". A estatística de teste segue a distribuição de qui-quadrado com graus de liberdade igual ao número de regressores no modelo. **A hipótese nula é homocedasticidade**.
+
+<br>
+
+```{r multi20, warning=FALSE, message=FALSE, fig.width=8, fig.height=6}
+#Testes de Heterocedasticidade de White
+#Caso especial do BPG
+#H0: Residuos sao homocedasticos.
+#Testes de Heterocedasticidade de Breusch-Pagan
+bptest(regressao1)
+
+#Testes de Heterocedasticidade NCV
+ncvTest(regressao1)
+```
+
+<br>
+
+### Uso do pacote {performance}
+
+<br>
+
+
+```{r multi21, warning=FALSE, message=FALSE, fig.width=10, fig.height=16}
+
+pacman::p_load(
+"performance",
+"lme4",
+"see",
+"qqplotr"
+)
+
+model_performance(regressao1)
+
+check_model(regressao1)
+```
+
+<br>
+
+## Heterocedasticidade: como corrigir?
+
+<br>
+
+Usar mínimos quadrados ponderados se conhecer a verdadeira variância heterocedástica $\sigma^2_i$. Contudo, raramente isto ocorre. O que mais se usa é transformação logarítmica de variáveis com grande variância e o procedimento de White para estimar erros-padrão robustos. O procedimento não altera a estimação no ponto, apenas os erros-padrão corrigindo a heterocedasticidade.
+
+A correção clássica de White para a matriz de variância dos coeficientes é dada por:
+
+$$
+Var(\hat \beta|X)=(X'X)^{-1}X'diag(e^2)X(X'X)^{-1}
+$$
+em que $e^2$ são os resíduos ao quadrado e $X$ é a matriz de variáveis explicativas do modelo. 
+
+Contudo, existem diversos outros métodos de ajustamento desta fórmula para a matriz de var-cov dos resíduos, denotada por $\Omega$. No R, a opção "const" retorna os resultados de $\sigma^2(X'X)^{-1}$. As outras opções retornam estimadores de White na forma da expressão  e diferem em termos de $(X'X)^{-1}X' \Omega X(X'X)^{-1}$ e diferem em como é $\Omega$. A diagonal de $\Omega$ será formada pelos elementos $\omega_i$ exposto para cada opção de HC (hc0, hc1, hc2, hc3, hc4):
+
+<br>
+
+1) const = $\omega_i= \hat \sigma^2$ 
+2) HC0 = $\omega_i= \hat u_i^2$ é matriz clássica de correção de Eicker (1963) e popularizada por White (1980);
+3) HC1 = $\omega_i= \frac {n}{n-k}\hat u_i^2$
+4) HC2 = $\omega_i= \frac {\hat u_i^2}{1-h_i}$
+5) HC3 = $\omega_i= \frac {\hat u_i^2}{(1-h_i)^2}$
+6) HC4 = $\omega_i= \frac {\hat u_i^2}{(1-h_i)^{\delta_i}}$ é a matriz de correção conforme Cribari-Neto (2004) para aperfeiçoar a performance em pequenas amostras com presença de observações influentes.
+
+"hc1", "hc2" e "hc3" as matrizes de correção sugeridas por MacKinnon e White (1985) e aperfeiçoadas para pequenas amostras conforme Long e Ervin (2000).
+
+para $h_i=H_{ii}$ como os elementos diagonais da matriz estimada, $\bar h$ é sua média é $\delta_i=min {\{4, h_i/ \bar h}\}$. A opção que retorna os mesmos resultados que o "padrão" de correção de White no Stata e Eviews é a "hc1". 
+
+<br>
+
+```{r multi22, warning=FALSE, message=FALSE}
+
+#Correcao da Heterocedasticidade
+regressao1 <- lm(log(wage) ~ urban + married
+                 + educ + exper, data=sal)
+coeftest(regressao1, vcov=vcovHC, type='HC1') #(Eviews)
+coeftest(regressao1, vcov=vcovHC, type='HC4') #sugerido (2011)
+```
+
+<br>
+
+# Autocorrelação e viés de especificação
+
+<br>
+
+## O que é Autocorrelação?
+
+Pode existir autocorrelação no cross-section, mas é muito mais presente em séries temporais. Existe dependência entre os termos de erro $(E(u_i u_j \ne 0 \quad \forall \quad  i \ne j))$. Diversos fatores podem gerar a correlação serial, como por exemplo: 
+
+a) inércia; 
+
+b) viés de especificação; 
+
+c) ausência de estacionariedade; 
+
+Com relação à propriedade dos estimadores, com autocorrelação, os estimadores de MQO são não-viesados e consistentes, mas não são eficientes. **Os testes t e F não são mais válidos**. 
+
+Nesta situação, da mesma forma que para a heterocedasticidade, é melhor utilizar o método de Mínimos Quadrados Generalizados (MQG).
+
+Considere um modelo com resíduos que tem correlação de primeira ordem:
+
+$$
+u_t=\rho u_{t-1}+v_t
+$$
+em que $\rho$ é o parâmetro de autocorrelação e "v" é um termo de erro "bem comportado", ou seja, não autocorrelacionado que segue a distribuição Normal com média zero e variância constante $\sigma^2$. 
+
+O coeficiente de autocorrelação $\rho$ pode ser obtido através de 
+
+$$
+\hat \rho = \frac {cov(\epsilon_t, \epsilon_{t-1})}{[var(\epsilon_t)^{1/2}] [var(\epsilon_{t-1})^{1/2}]}
+$$
+
+Com base nesta idéia, alguns testes foram desenvolvidos visando verificar a presença de autocorrelação nos resíduos da regressão. 
+
+## Autocorrelação: Como Detectar?
+
+Considere o modelo abaixo, uma série temporal que se inicia em 1947 e faz uma regressão do consumo em função da renda, da riqueza e da taxa de juros. As três primeiras variáveis estão em log. 
+
+``` {r  multi23, warning=FALSE, message=FALSE}
+#Inicio do Script
+#Pacotes a serem usados
+library(forecast)
+library(ggplot2)
+library(scatterplot3d)
+
+options(digits=4)
+
+data("consump")
+dados <- consump
+dados <- ts(dados, start=c(1959))
+
+#Estimacao da Equacao de Regressao
+regressao1 <- lm(log(c) ~log(y) + inf, data=dados)
+summary(regressao1)
+```
+
+<br>
+
+### MÉTODO GRÁFICO
+
+<br>
+
+Apesar de existirem testes estatísticos, uma análise gráfica pode ser útil para tentar verificar algum comportamento nos dados que de indicativo se existência de autocorrelação.
+
+
+``` {r multi24, warning=FALSE, message=FALSE, fig_width= 12, fig_height= 16 }
+#Analise dos residuos do modelo
+resid <- regressao1$residuals
+resid <- ts(resid, start=c(1947))
+```
+
+``` {r multi25, warning=FALSE, message=FALSE, fig_width= 12, fig_height= 10 }
+par(mfrow=c(1,1))
+scatterplot3d(lag(resid,-1), resid, pch=16, box=FALSE)
+```
+
+<br>
+
+### TESTE DE DURBIN-WATSON
+
+<br>
+
+O teste mais conhecido é o "d" de Durbin-Watson (razão da soma das diferenças ao quadrado entre os sucessivos resíduos e a soma de quadrados dos resíduos):
+
+$$
+d=\frac{\sum_{t=2}^{t=n}(\hat{u}_t-\hat{u}_{t-1})^2}{\sum_{t=1}^{t=n}(\hat{u}_t^2)}
+$$
+
+Possui importantes premissas:
+
+a) a regressão precisa ter intercepto; 
+
+b) o termo de erro precisa ser um AR(1) ($u_t=\rho u_{t-1}+v_t$), não pode ser AR de ordem superior; 
+
+c) o erro deve ser normal; 
+
+d) o modelo não pode ter termos defasados da variável dependente (y); 
+
+Não há um único valor crítico que leve a rejeição ou não da hipótese nula (ausência de autocorrelação), contudo o R mostra um valor de Probabilidade. Gujarati e Porter (2009) demonstram facilmente que $d\approx2(1- \hat{\rho})$. 
+
+$$
+\hat{u}_t=\hat{\rho} u_{t-1}+v_t
+$$
+
+Dado que $-1\le \rho \le 1$, tem-se que $0\le d \le 4$, que são os limites de "d". Como regra prática, espera-se que d esteja próximo de 2 para pressupor que não existe autocorrelação nos resíduos. Quanto mais próximo de 0 (zero), maior a evidência de auto positiva e de 4, de auto negativa.
+
+``` {r multi26, warning=FALSE, message=FALSE}
+#Teste de Durbin-Watson
+# Testa the hipotese que nao existe correlacao de 1 lag nos residuos
+dwtest(regressao1, alt="two.sided")
+```
+
+<br>
+
+### TESTE DE BREUSCH-GODFREY
+
+<br>
+
+Teste que permite regressandos defasados inclusos como regressores, processos autoregressivos (AR) de ordens maiores do que 1 e 
+Termos de médias móveis (MA). 
+
+Suponha que o termo de erro siga a seguinte estrutura:
+
+$$
+u_t=\rho_1u_{t-1}+\rho_2u_{t-2}+\dots+\rho_pu_{t-p}+v_t
+$$
+
+$v_t$ é um erro que segue as hipóteses do MCRL.
+
+A hipótese nula do teste BG é
+
+$$
+H_0=\rho_1=\rho_2=\dots=\rho_p=0
+$$
+
+**Ausência de autocorrelação de qualquer ordem**. Dada a não observação de $u_t$ é usado a sua estimativa e estimada uma regressão auxiliar de $e_t$ contra as variáveis explicativas e os termos de erros defasados. Em grandes amostras, o teste BG segue a distribuição $(n-p)R^2 \sim \chi_p^2$.
+
+O teste BG possui as seguintes características: 
+
+A) A variância de $u_t$ seja homocedástica;
+
+B) Definir a ordem de "p". Normalmente isto é um processo de tentativa e erro, com o uso de critérios de Akaike ou Schwarz para definição do melhor modelo. Deve ser escolhido o modelo com menor valor de critério de informação;
+
+<br>
+
+```  {r multi27, warning=FALSE, message=FALSE}
+#Teste de Breusch-Godfrey
+#AIC(regressao1)
+#BIC(regressao1)
+bg1 <- bgtest(regressao1,1)
+coeftest(bg1)
+bg1
+
+bg2 <- bgtest(regressao1,2)
+coeftest(bg2)
+bg2
+
+bg3 <- bgtest(regressao1,3)
+coeftest(bg3)
+bg3
+```
+
+<br>
+
+## Autocorrelação: Como Corrigir?
+
+<br>
+
+Existem diversas formas de corrigir a autocorrelação:
+
+A) Transformar as séries, diferenciando-as, caso se saiba o valor de $\rho$ ou considerando $\rho=1$;
+
+B) Fazer uma transformação generalizada: $Y_t- \hat{\rho}(Y_{t-1})$ para obter $\hat{\rho}$, fazer $\approx 1-\frac{d}{2}$;
+
+C) Usar o método de correção dos erros padrões de Newey-West (HAC-Consistente com auto e hetero), desde que a amostra seja grande. Erros robustos.
+
+Com base em Figueiro (2021), o cálculo dos erros-padrão por estimativas robustas serão desejáveis para formas mais gerais de correlação serial, diga-se, com autocorrelações de ordens superiores.
+
+Desta forma, estima-se o modelo padrão de regressão linear por MQO. Em seguida, se pega os resíduos estimados de uma regressão auxiliar de $x_{1t}$ em função dos demais $x_{kt}$ e calcula-se $\hat a = \hat r_t \hat u_t$ em que $\hat u_t$ são os resíduos da estimação original por MQO. Por uma escolha de "g", que pode variar entre a parte inteira de $4(n/100)^{2/9}$ ou $n^{1/4}$, calcula-se
+
+<br>
+
+$$
+\hat v= \sum_{t=1}^{n} k^2 \hat a^2_t + 2 \sum_{h=1}^{g} [1-h/(g+1)]\Big(\sum_{t=h+1}^{n} \hat a_t \hat a{t-h}\Big)
+$$
+<br>
+
+e $ep(\hat \beta_1)=[SE/\hat \sigma]^2\sqrt(\hat v)$, em que SE é o erro padrão usual do MQO para $\hat \beta_j$.
+
+Desta forma obtêm-se os erros-padrões robustos dos parâmetros. Fazendo uso do pacote `` sandwich``, e a opção para a matriz de variância-covariância consistente com heterocedasticidade e autocorrelação vcovHAC conforme o script abaixo. Conforme a ordem da autocorelação (se acima da primeira ordem), pode ser mais indicado considerar o tratamento para a estrutura geral de Newey e West (1987) e Wooldridge (1989), citados por Wooldridge
+(2016, seção 12.5).
+
+<br>
+
+``` {r multi28, warning=FALSE, message=FALSE}
+#Correcao do problema da Autocorrelacao - Duas formas
+
+regressao1 <- lm(log(c) ~log(y) + inf, data=dados)
+coeftest(regressao1, vcov=NeweyWest)
+coeftest(regressao1, vcov=vcovHAC)
+```
+
+<br>
+
+# Viés de Especificação
+
+<br>
+
+**Omitir uma variável relevante** - *Conseqüências*: 
+
+1) se a variável omitida for correlacionada com alguma incluída, os betas estimados são tendenciosos e inconsistentes; 
+
+2) se não existir correlação, o intercepto é viesado; 
+
+3) a variância do erro estará errada; 
+
+4) IC, erros padrão e testes de hipóteses não são calculados corretamente.
+
+**Inserir uma variável irrelevante** - *Conseqüências*: a perda da eficiência, ou seja, erros-padrão maiores do que as dos parâmetros do modelo verdadeiro. 
+
+A conclusão é que incluir uma variável irrelevante é menos problemático do que omitir uma variável relevante. Existem alguns testes para identificar problemas na especificação dos modelos. 
+
+<br>
+	
+## Viés de Especificação: como detectar?
+
+<br>
+
+O Teste Reset de Ramsey é usado para analisar má especificação do modelo. É um teste mais geral, tanto de variáveis irrelevantes, quanto de forma funcional incorreta e correlação entre os regressores e o termo de erro. A hipótese nula é de que o modelo inicialmente estimado está bem especificado. Uma falha no teste é que diz que o modelo não está bem especificado, mas não se sabe qual alternativa é a melhor. Deve-se testar outras formas, com outras variáveis e ir refazendo o teste.
+
+Considere um modelo de regressão
+
+$$
+y=\beta_0+\beta_1x_1+ \dots +\beta_kx_k+u
+$$
+
+se a hipótese  $E(u|x_1,x_2, \dots ,x_k)=0$ for violada isto indica que a relação funcional entre as variáveis explicadas e explicativas está mal especificada, como mostra Wooldridge (2018, p. 90). 
+
+O Teste Reset adiciona polinômios aos valores estimados por MQO na equação acima para verificar se são significativos e detectar tipos gerais de má especificação de formas funcionais.
+	
+Para fazer o teste é preciso definir quantas funções dos valores estimados serão incluídos na regressão expandida. No geral, quadráticos e cúbicos tem dado bons resultados.
+
+A estatistica do teste é dada por
+
+$$
+F= \frac{\frac{R^2_{novo}-R^2_{velho}}{m}}{\frac{1-R^2_{novo}}{n-p}}
+$$
+
+em que m é o número de novos regressores e p é o número de parâmetros no novo modelo. 
+
+$F \sim F_{m,n-p}$ com n igual ao número de observações.
+
+<br>
+``` {r aula10_7, warning=FALSE, message=FALSE}
+#Regressao Multipla
+
+regressao1 <- lm(lwage ~ educ + I(educ^2) + exper + I(exper^2) + tenure)
+summary(regressao1)
+
+#Teste de especificação do Modelos
+#Hipotese Nula: Modelo esta bem especificado.
+resettest(regressao1, power=2 , type='fitted')
+resettest(regressao1, power=3 , type='fitted')
+
+#Estimacao do Modelo Linear
+regressao2 <- lm(lwage ~ educ + exper + tenure)
+summary(regressao2)
+
+#Teste de especificacao do Modelos
+#Hipotese Nula: Modelo esta bem especificado.
+resettest(regressao2, power=2 , type='fitted')
+resettest(regressao2, power=3 , type='fitted')
+```
+<br>
+
+O teste Reset de Ramsey é usado para analisar má especificação do modelo. É um teste mais geral, tanto de variáveis irrelevantes, quanto de forma funcional incorreta e correlação entre os regressores e o termo de erro.
