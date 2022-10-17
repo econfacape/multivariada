@@ -1,0 +1,392 @@
+---
+title: "Análise Estatística Multivariada"
+author: "João Ricardo F. de Lima"
+date: "`r format(Sys.time(), '%d de %B de %Y.')`"
+output: 
+    html_document:
+        theme: flatly
+        number_sections: yes
+        highlight: textmate
+#        includes: 
+#          in_header: "header.html"
+        toc: yes
+        toc_float:
+          collapsed: yes
+          smooth_scroll: yes 
+---
+
+<br>
+
+# Conceito, Objetivos e Dados
+
+<br>
+
+Consiste em um conjunto de métodos estatísticos usados para simplificar a interpretação de grandes conjuntos de dados. A aplicação se dá em diversas área.
+
+Segundo Mingoti (2005, p. 21), *"embora historicamente o uso de métodos multivariados esteja relacionado com trabalhos na Psicologia, Ciências Sociais e Biológicas, mais recentemente eles têm sido aplicados em um grande universo de área diferentes, como: Educação, Geologia, Química, Física, Engenharia, Ergonomia, etc."*. 
+
+Basicamente os **objetivos** são:
+
+a) Redução ou simplificação da base de dados sem sacrificar informação importante;
+ 
+b) Ordenação e agrupamento (classificação) - criar grupos de objetos (ou variáveis) semelhantes com base em vçrias características. Por isso é multivariada;
+
+c) Investigação da estrutura de dependência entre as variáveis. Podemos ter um conjunto de dados relacionados com tecnologias utilizadas nas fazendas e outro conjunto relacionados com característica do dono da propriedade. A dependência entre estes grupos de variáveis pode indicar porque algumas propriedades usam mais tecnologias do que outras;
+
+d) Predição - realizar previsões;
+ 
+e) Construção de hipóteses e testes.
+
+As técnicas de Análise multivariada são muito utilizadas para a construção de índices. Um índice sintetiza em uma única variável a informação de todas as variáveis que foram medidas sobre o fenômeno. Como exemplo, pode-se citar Índice de Desemprego, Índice de Qualidade de Vida, Índice de Qualidade Ambiental, Índice de Desenvolvimento Humano (IDH), entre outros. Nestes casos, a *Análise de Componentes Principais* ou *Análise Fatorial* são técnicas que podem ser utilizadas (LIMA, 2015). 
+
+Outra aplicação interessante é quando se procura dividir um conjunto de objetos em grupos que sejam o mais homogêneo possível dentro do grupo e heterogêneos entre si. Uma empresa pode buscar estratificar seus clientes, dividindo-os em grupos e traçando objetivos para cada grupo separadamente. Pode-se separar os municípios de determinado estado em grupos homogêneos com o intuito de delinear programas adequados para os diferentes grupos. Nestes casos, a *Análise de Cluster* é a técnica adequada (LIMA, 2015). 
+
+Outra situação é a enfrentada pelas seguradoras para realização de seguros de veículos. Cada cliente se encaixa em determinado perfil que pode ter maior ou menor risco de sinistro. Neste caso, pode-se aplicar *Análise Discriminante* buscando identificar a qual grupo de risco de sinistro um determinado elemento tem mais chance de pertencer (LIMA, 2015).
+
+Os **dados para Análise multivariada** em uma amostra de seção cruzada são geralmente compostos de variáveis (renda, idade, anos de escolaridade, etc.) e observações (pessoa, família, escola, município, estado, país, etc.). Dispostos em uma tabela os dados formam uma matriz em que cada coluna se refere a uma variável e cada linha a uma observação. As **observações** são as unidades de Análise ou unidades amostrais e as **variáveis** são as características medidas nas observações. Assim, os dados usados são tipicamente formados por *n* observações em *p* variáveis.
+
+```  {r estat1, warning=FALSE, message=FALSE}
+#Verificando o diretorio que o R esta direcionado
+getwd()
+
+#Direcionado o R para o Diretorio a ser trabalhado
+setwd('/Users/jricardofl/Dropbox/tempecon/dados_censoagro')
+
+#Pacote
+library(readxl)
+
+#Entrada dos dados
+dados <- read_excel("artigo.xlsx")
+
+# Nomes das variáveis utilizadas
+#
+#x1	Porcentagem dos estabelecimentos que usam força animal
+#x2	Porcentagem dos estabelecimentos que usam força mecânica
+#x3	Porcentagem da área com pastagens que é plantada
+#x5	area trabalhada como porcentagem da área aproveitável
+#x6	Area com lavouras permanentes e temporárias como proporção da área aproveitável
+#x7	Numero de tratores por equivalente homem
+#x8	Numero de tratores por área explorada
+#x9	Numero de arados por área explorada
+#x10	Numero de colheitadeiras por área explorada
+#x11	Valor total dos combustíveis consumidos por área explorada
+#x12	Quantidade de energia eletrica consumida por área explorada
+#x13	Quantidade de energia eletrica consumida po equivalente homem
+#x14	Valor total dos bens por área explorada
+#x15	Valor total dos bens por equivalente homem
+#x16	valor total dos investimentos por area explorada
+#x17	Valor total dos investimentos por equivalente homem
+#x18	Valor total dos financiamentos em 2006 por área explorada
+#x19	Valor total dos financiamentos em 2006 por equivalente homem.
+#x20	Valor total da produção em 2006, por área explorada
+#x21	Valor total da produção em 2006, por equivalente-homem
+#x22	Valor total das despesas em 2006, por área explorada
+#x23	Valor total das despesas em 2006, por equivalente homem
+#x24	Despesas com adubos, corretivos, sementes e mudas, agrotóxicos, medicamenteos para animais, sal e rações por área explorada
+#x25	Despesas com adubos, corretivos, sementes e mudas, agrotóxicos, medicamenteos para animais, sal e rações por equivalente homem
+#x26	Assistência Técnica
+#x27	uso de agrotóxico para controle de pragas e doenças
+#x28	uso de controle alternativo de pragas e doenças
+#x29	irrigação
+
+#Visualizaçao dos dados
+head(dados, 15)
+
+summary(dados)
+```
+
+<br>
+
+# Técnicas da Análise Multivariada
+
+<br>
+
+Pode-se considerar que a estatística multivariada se divide em dois grupos: o primeiro consiste nas técnicas de simplificação da estrutura de variabilidade dos dados. Principalmente, fazem parte deste grupo a **Análise de componentes principais, Análise fatorial, correlações canônicas, cluster e discriminante**;
+	
+O segundo grupo concentra os métodos de estimação de parâmetros, Análise de variância e Regressão Múltipla. 
+
+Para um estudo aprofundado das técnicas de Análise multivariada, é importante revisar conceitos de Estatística Básica: média, variância, desvio padrão, covariância, correlação seriam as mais relevantes;
+
+E também é importante revisar conceitos de álgebra matricial: vetores, matrizes, combinações lineares, dependência linear, raízes e vetores característicos e decomposição espectral, basicamente. 
+
+<br>
+
+## Análise de Componentes Principais
+
+Segundo Mingoti (2005, p. 59), *"seu objetivo principal é o de explicar a estrutura de variância-covariância de um vetor aleatório, composto de p-variáveis aleatórias, através da construção de combinações lineares das variáveis originais. Estas combinações lineares são chamadas de componentes principais e são não correlacionadas entre si"*.
+
+Uma combinação linear de vetores ou de variáveis é um novo vetor (ou nova variável) defindo por 
+
+$$
+y=a_1x_1+a_2x_2+a_3x_3+ \dots + a_px_p
+$$
+*"Se temos p-variáveis originais é possível obter-se p componentes principais. No entanto, em geral deseja-se obter 'redução do número de variáveis a serem avaliadas e interpretação das combinações lineares construídas', ou seja, a informação contida nas p-variáveis originais é substituída pela informação contida em k (k$<$p) componentes principais não correlacionados"* (MINGOTI, 2005, p. 59).
+
+Matricialmente, pode ser escrita como $y=a'x$ onde os a's são as constantes que definem a combinação linear e são determinados de forma a atender às características da combinação linear que se deseja. Como as variáveis são dadas, os coeficientes a's são determinados de forma a atender às restrições estabelecidas, ou seja, o princípio da técnica. As combinações lineares tem média e variância definidas, respectivamente, por $E(Y)=a'\mu$ e $V(Y)=a'\sum a$. 
+
+Mais de uma combinação linear podem ser definidas de um conjunto de variáveis. Em geral, com *p* variáveis pode-se formar p combinaçoes lineares diferentes. 
+
+Variáveis quantitativas usadas em análise multivariada são, geralmente, expressas em unidades diferentes. Diferenças de escalas afetam a contribuição da variável para a variância generalizada. Para usar essas variáveis em uma técnica multivariada elas precisam ser transformadas para uma escala comum. Entre os métodos usados alguns eliminam diferenças em tamanho (escala) outras reduzem tamanho e variabilidade para uma escala comum.
+
+O método mais usado para tornar variáveis comparáveis é a Padronização que consiste em subtrair a média e dividir pelo desvio padrão.Além de simplificar cálculos e manipulações matemáticas a padronização de variáveis é importante para resolver o problema de unidades de medidas diferentes das variáveis e do desbalanceamento entre as variâncias. Toda variável padronizada tem média zero, variância igual a um e é adimensional. 
+
+Uma questão importante é que a covariância entre variáveis padronizadas é igual a correlação entre variáveis originais. Assim, usar a matriz de correlações das variáveis ao invés da matriz var-cov é o mesmo que trabalhar com variáveis padronizadas. 
+
+Existe uma tendência para que a variável com maior volatilidade cause uma desestabilização na Análise de Componentes Principais e também na Análise Fatorial. A solução é padronizar as variáveis de forma que tenham média zero e variância unitária;
+
+A Análise passa a ser determinar as *raízes características* e os *vetores característicos* da matriz de correlações $\mathbf{R}$. 
+
+Sobre raízes e vetores característicos, uma matriz quadrada A tem raízes características $\lambda_i$ e vetores característicos $X_i$ dados pela seguinte relação $AX=\lambda X$. Uma matriz $p_xp$ tem *p* raízes e *p* vetores característicos e a relação pode ser escrita como $AX_i=\lambda_i X_i$ o que, intituitivamente, significa que existem constantes $\lambda_i$ e vetores $X_i$, tais que a multiplicação da matriz pelo vetor é igual à multiplicação do vetor por uma constante. 
+
+As raízes e vetores característicos são encontrados a partir de 
+
+$$
+AX=\lambda X
+$$
+
+$$
+AX - \lambda X= 0
+$$
+$$
+(A- \lambda I)X= 0
+$$
+
+sendo que a equação é verdadeira para qualquer $\lambda$ se $X=0$, mas solução não interessa. Para se ter uma solução $x \neq 0$, a inversa de $(A- \lambda I)X$ nao deve existir e, para isto, o seu determinante precisa ser igual a zero. Assim, pode-se entender $\lambda$ (raízes características) como os valores que zeram o determinante da equação característica.
+
+Os vetores característicos não são únicos, devendo ser normalizados. Para cada raiz característica existe um vetor característico que é encontrado resolvendo a expressão $(A-\lambda_i I)X_i=0$. 
+
+As raízes características possuem um conjunto de propriedades: 
+
+1) $tr(A) =  \sum_{i=1}^{p} \lambda_i$;
+2) $det(A) = \Pi_{i=1}^{p}$. Se alguma raiz característica for zero, o determinante de A é zero e a matriz não possui inversa; 
+3) Para uma matriz diagonal, as raízes são os elementos da diagonal principal;
+4) Para uma matriz triangular, as raízes são os elementos da diagonal principal;
+5) Raízes de A são iguais as de $A'$
+6) As raízes de $A^{-1}$ são iguais a $1/ \lambda_i$, mas os vetores característicos são os mesmos;
+7) Se A é ortogonal, $\lambda_i=1$ ou $-1$;
+8) Se A é uma matriz idempotente, $\lambda_i=1$ ou $0$;
+9) Raízes características de matrizes simétrica;
+10) Os vetores característicos de matrizes simétricas são ortogonais, ou seja, não
+correlacionados.
+
+Considere um vetor de p variáveis padronizadas dada por
+
+$$
+\mathbf{Z'}=\left[\begin{array}{llll}
+Z_1 &Z_2 &\dots &Z_p
+\end{array}\right]
+$$
+
+e uma matriz $\mathbf{P_{pxp}}$ de correlações das variáveis $\mathbf{Z}$. Pela decomposição espectral
+
+$$
+P=E \Lambda E'=\sum_{i=1}^{p}\lambda_ie_ie'_i
+$$
+
+$$
+e'_ie_j=\delta_{ij} \qquad (ortogonais)
+$$ 
+
+$$
+\lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_p \geq 0
+$$
+
+A Análise passa a ser determinar as raízes $(\lambda)$ e vetores caraterísticos $(\mathbf{e_i})$ da matriz de correlações $\mathbf{P}$.
+
+Os CP (componentes principais) são combinações lineares de $\mathbf{Z}$.
+
+$$
+Y_j=e'_jZ=e_{j1}Z_1+e_{j2}Z_2+\dots+e_{jp}Z_p
+$$
+	
+sendo que a variância de $Y_j$ é igual a $\lambda_j$, com $j=1,2,\dots,p$ e a covariância entre $Y_j$ e $Y_k$ é igual a zero, para qualquer $j \neq k$. 
+
+A correlação entre $Y_j$ e a variável padronizada $Z_i$ é igual a:
+
+$$
+r_{Y_j,Z_j}=r_{Y_j,X_i}=e_{ji}\sqrt{\lambda_j}
+$$
+e, então, as variáveis $\mathbf{Z}$ com os maiores coeficientes na componente principal $\mathbf{Y_j}$ são as mais correlacionadas com a componente;
+
+### Análise de Componentes Principais - Escores
+
+A variância total de $\mathbf{Z}$ é igual ao traço da matriz $\mathbf{P_{pxp}}$. A proporção de variância total explicada pela j-ésima CP é igual a $\frac{\lambda_j}{p}$, $j=1,2, \dots,p$.
+
+Escore é o valor de $\mathbf{Y_i}$ para cada observação. Estes servem para, por exemplo:
+
+I) comparar ou ordenar as observações; 
+II) Análise de cluster ou regressão
+III) A matriz de correlações entre as variáveis e os componentes é bastante importante para entender os componentes e lhes atribuir um nome.
+
+## Análise Fatorial
+
+Análise fatorial exploratória é uma técnica estatística para redução de dados. Ela reduz o número de variáveis (p) na Análise descrevendo combinações lineares destas (fatores) que contém a maior parte das informações das variáveis originais e que possam ter interpretações significativas. Estes fatores não são correlacionados entre si;
+
+Seja $\mathbf{x}$ um vetor aleatório px1 com média $\mathbf{\mu}$ e matriz de variância covariância dada por $\mathbf{\Sigma}$. A variância total de cada variável pode ser separada em três parcelas: fatores comuns, fatores específicos e um erro. 
+
+Suponha que as inter-relações entre os elementos de $\mathbf{x}$ possam ser explicadas por um modelo fatorial
+
+$$
+\mathbf{x}=\mathbf{\mu}+\mathbf{\Lambda} \mathbf{f}+ \mathbf{\epsilon}
+$$
+onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos $f_1, \dots, f_k$ sendo denominados fatores comuns (comunalidade); $\Lambda$ é uma matriz de constantes desconhecidas pxk chamadas de cargas fatoriais; e os elementos $\epsilon_1, \dots, \epsilon_p$ do px1 vetor aleatório $\boldmath{\epsilon}$ são chamados de fatores específicos (unicidade) e erro. Assume-se que  $\mathbf{f}$ e $\boldmath{\epsilon}$ não são correlacionados.
+	
+## Pressupostos do Modelo de Análise Fatorial}
+
+
+	 Os pressupostos do Modelo de Análise Fatorial podem ser resumidos em:
+	  $\mathbf{f} \sim (\mathbf{0},\mathbf{I}) $;
+	 $\epsilon \sim (\mathbf{0},\mathbf{\Psi})$, em que $\mathbf{\Psi}=diag(\psi_1,\dots,\psi_p)$;
+	  $\mathbf{f}$ e $\boldmath{\epsilon}$ são independentes;
+	 No modelo fatorial, a matriz $\mathbf{\Sigma}$ é decomposta como
+	$$
+\mathbf{\Sigma}=\mathbf{\Lambda}\mathbf{\Phi}\mathbf{\Lambda}'+\mathbf{\Psi}
+	$$
+	 sendo que o modelo não rotacionado assume que os fatores não são correlacionados $\mathbf{\Phi}=\mathbf{I}$. O problema, então, é estimar $\mathbf{\Lambda}$ e $\mathbf{\Psi}$ que reproduzam $\mathbf{\Sigma}$.
+	
+
+
+
+## Modelo de Análise Fatorial}
+
+
+	 Existem diversas formas de estimar as cargas fatoriais: componentes principais, fator principal, mçxima verossimilhança são as principais, cujas explicações detalhadas podem ser encontradas em Mingoti (2005).
+	 Um termo importante na Análise Fatorial é a Comunalidade, ou seja, o somatório das correlações dos fatores com a variável ``\textbf{i}''.
+		$$
+	\mathbf{h_i^2}=a_{i1}^2+a_{i2}^2+\dots+a_{ir}^2
+	$$
+	 A Unicidade ($\mathbf{\Psi}$) é dada por $\mathbf{\Psi}=1-\mathbf{h_i^2}$ 
+	
+
+
+
+## Rotação de Fatores}
+
+
+	 Consiste em ``modificar'' as cargas fatoriais, ou seja, calcular nova matriz A. O objetivo é obter uma matriz de cargas fatoriais de mais fçcil interpretação, onde cada fator se relaciona mais distintamente com certo grupo de variáveis;
+	 Existem diversos métodos de rotação, tanto ortogonal quanto obliqua. Entretanto, o método de rotação mais utilizado é o Varimax, o qual permite que os coeficientes de correlação entre os indicadores e os fatores fiquem o mais próximo possível de zero ou de 1 em valor absoluto, facilitando a interpretação;
+	  O método de Rotação Varimax ``forma um novo sistema de eixos ortogonais com o mesmo número de fatores e permite que o grupo de variáveis apareça com maior nitidez, facilitando a interpretação e Análise'' (ZAMBRANO e LIMA, 2004). 
+	
+
+
+
+## Escores Fatoriais}
+
+
+	 Escores fatoriais são os valores de cada fator para cada observação;
+	 São importantes para mapeamento das observações e para serem utilizadas em outras técnicas, como cluster, regressão, etc 
+	
+
+
+
+## Análise da Adequabilidade }
+
+
+ \textbf{Matriz de Correlações}: examinar a matriz de correlações simples, procurando visualizar algum padrão de relacionamento entre as variáveis; devem existir grupos de variáveis correlacionadas;
+ \textbf{Matriz Anti-Imagem}: Matriz de correlações Parciais com sinais invertidos
+ \textbf{Teste de esfericidade de Bartlett}: testa se a matriz de correlações é estatisticamente igual a uma matriz identidade. Se for, não é boa para Análise Fatorial. O que se busca, então, é rejeitar a hipótese nula de que a matriz de correlação verdadeira é uma matriz identidade;
+	
+
+
+
+## Análise da Adequabilidade }
+
+
+	 \textbf{	Medida KMO (Kayser-Meyer-Olkin)}: é um índice que compara correlações simples e parciais:
+	$$
+	\mathbf{KMO}=\frac{\sum_{i=1}^{p}\sum_{j=1}^{p}r_{ij}^2}{\sum_{i=1}^{p}\sum_{j=1}^{p}r_{ij}^2+\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2}
+	$$
+	 em que $r_{ij}$ é o coeficiente de correlação simples e $a_{ij}$ é a correlação parcial.
+	 Quanto mais $\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2$ for próximo de 0, mais o valor de $\mathbf{KMO}$ se aproximarç de 1 e mais adequados os dados serão para a Análise fatorial. Valores abaixo de 0,6 são considerados ruins para a Análise fatorial.
+	
+
+
+# Análise de Clusters}
+
+
+## Análise de Cluster }
+
+
+	 Segundo Mingoti (2005), ``a Análise de agrupamentos, também conhecida como Análise de conglomerados, classificação ou cluster, tem como objetivo dividir os elementos da amostra, ou população, em grupos de forma que os elementos pertencentes a um mesmo grupo sejam similares entre si com respeito às variáveis (características) que neles foram medidas, e os elementos em grupos diferentes sejam heterogêneos em relação a estas mesmas características''.
+	
+
+
+
+## Etapas da Análise de Cluster }
+
+
+		Escolher um critério de parecença (similaridade ou dissimilaridade);
+	 Formação dos grupos (escolher o algoritmo de agrupamento)
+	 Definição de número de grupos: pode ser a posteriori, como resultado da Análise ou a priori, dado o conhecimento ou conveniência da Análise;
+	 validação do agrupamento: critério do pesquisador;
+	 Interpretação e Análise: pode-se fazer estatística descritiva, diferença de médias, etc.	
+	
+
+
+
+## Medidas de Parecença}
+
+Valor numérico que quantifica o grau de semelhança entre um par de objetos. Pode ser de dois tipos: similaridade ou dissimilaridade. Para quantitativas, as distâncias são as mais usadas. São medidas de dissimilaridade.
+
+	 Distancia Euclidiana;
+	  Distancia Euclidiana Quadrçtica;
+	 Distancia Euclidiana Ponderada;
+	 Distância de Minkowsky (city-block)
+	
+
+
+
+## Técnicas para construção de Conglomerados (Clusters)}
+
+Para Mingoti (2005), ``as técnicas de conglomerados ou clusters são frequentemente classificadas em dois tipos: técnicas hierçrquicas e não hierçrquicas, sendo que as hierçrquicas são classificadas em aglomerativas e divisivas''. 
+
+	 Os \textbf{Métodos hierçrquicos aglomerativos} partem do princípio de que no início do processo de agrupamento têm-se n conglomerados (cada elemento é um conglomerado). Em cada passo do algoritmo, os elementos vão sendo agrupados, formando novos conglomerados até o ponto em que todos os elementos estão num único grupo. 
+	
+
+
+
+## Técnicas para construção de Conglomerados (Clusters)}
+
+
+	 Em termos de variabilidade, no estçgio inicial é a menor possível e no final, a mçxima possível, pois todos os elementos estão agrupados em apenas 1 cluster. Se dois elementos aparecem juntos num mesmo grupo em algum estçgio do processo de agrupamento, permanecerão juntos até o final, ou seja, não podem mais ser separados. 
+	 Devido a esta propriedade, denominada hierarquia, se pode construiu o \textbf{Dendograma}. Dendograma é um grçfico em forma de çrvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade. 
+	
+
+
+
+## Métodos de agrupamento}
+
+
+	 Método de ligação simples;
+	 Método de ligação completa ou do vizinho mais distante;
+	 Método da média das distâncias (average linkage);
+	 Método dos centróides;
+	 Método de Ward
+	
+Segundo Mingoti (2005), ``os métodos de ligação simples, completa e da média podem ser utilizados tanto para variáveis quantitativas, quanto qualitativas, ao contrçrio dos métodos do centróide e de Ward que são apropriados apenas para variáveis quantitativas, jç que têm como base a comparação de vetores de médias''. 
+
+
+
+## Métodos Não-Hierçrquicos}
+
+
+		São métodos de partição de ``n'' objetos em ``k'' grupos;
+	 Os ``k'' grupos são pré-determinados;
+	 A cada passo verifica-se se os objetos estão alocados da ``melhor'' maneira;
+	 Função objetivo: procura minimizar a variância dentro do grupo e maximizar a variância entre os grupos;
+	
+
+
+
+## Métodos Não-Hierçrquicos}
+
+
+	 Não fornece dendograma. Isto porque se, em algum passo do algoritmo dois elementos tiverem sido colocados num mesmo cluster, não necessariamente ``estarão juntos'' na partição final;
+	 Bom quando se tem um grande número de observações;
+	 O problema principal aqui não é o número de grupos e sim a melhor forma de alocar os elementos em k grupos.
+	 O método mais usado é o das k-médias (k-means). 
+	
+
+
+<br>
+<br>
