@@ -1520,7 +1520,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Análise Estatística Multivariada</h1>
 <h4 class="author">João Ricardo F. de Lima</h4>
-<h4 class="date">17 de Outubro de 2022.</h4>
+<h4 class="date">18 de Outubro de 2022.</h4>
 
 </div>
 
@@ -1532,7 +1532,7 @@ Dados</h1>
 <p><br></p>
 <p>Consiste em um conjunto de métodos estatísticos usados para
 simplificar a interpretação de grandes conjuntos de dados. A aplicação
-se dá em diversas área.</p>
+pode ocorrer em diversas áreas do conhecimento.</p>
 <p>Segundo Mingoti (2005, p. 21), <em>“embora historicamente o uso de
 métodos multivariados esteja relacionado com trabalhos na Psicologia,
 Ciências Sociais e Biológicas, mais recentemente eles têm sido aplicados
@@ -1563,8 +1563,8 @@ Vida, Índice de Qualidade Ambiental, Índice de Desenvolvimento Humano
 Principais</em> ou <em>Análise Fatorial</em> são técnicas que podem ser
 utilizadas (LIMA, 2015).</p>
 <p>Outra aplicação interessante é quando se procura dividir um conjunto
-de objetos em grupos que sejam o mais homogêneo possível dentro do grupo
-e heterogêneos entre si. Uma empresa pode buscar estratificar seus
+de objetos em grupos que sejam os mais homogêneos possíveis dentro do
+grupo e heterogêneos entre si. Uma empresa pode buscar estratificar seus
 clientes, dividindo-os em grupos e traçando objetivos para cada grupo
 separadamente. Pode-se separar os municípios de determinado estado em
 grupos homogêneos com o intuito de delinear programas adequados para os
@@ -1711,13 +1711,15 @@ Multivariada</h1>
 <p>Pode-se considerar que a estatística multivariada se divide em dois
 grupos: o primeiro consiste nas técnicas de simplificação da estrutura
 de variabilidade dos dados. Principalmente, fazem parte deste grupo a
-<strong>Análise de componentes principais, Análise fatorial, correlações
-canônicas, cluster e discriminante</strong>;</p>
-<p>O segundo grupo concentra os métodos de estimação de parâmetros,
-Análise de variância e Regressão Múltipla.</p>
-<p>Para um estudo aprofundado das técnicas de Análise multivariada, é
-importante revisar conceitos de Estatística Básica: média, variância,
-desvio padrão, covariância, correlação seriam as mais relevantes;</p>
+<strong>Análise de Componentes Principais, Análise Fatorial, Correlações
+Canônicas, Cluster e Discriminante</strong>;</p>
+<p>O segundo grupo concentra os métodos de estimação de parâmetros, como
+na análise de <strong>Regressão Simples</strong> e
+<strong>Múltipla</strong>.</p>
+<p>Para um estudo aprofundado das técnicas de <em>Análise
+Multivariada</em>, é importante revisar conceitos de Estatística Básica:
+média, variância, desvio padrão, covariância, correlação seriam as mais
+relevantes;</p>
 <p>E também é importante revisar conceitos de álgebra matricial:
 vetores, matrizes, combinações lineares, dependência linear, raízes e
 vetores característicos e decomposição espectral, basicamente.</p>
@@ -1725,6 +1727,16 @@ vetores característicos e decomposição espectral, basicamente.</p>
 <div id="análise-de-componentes-principais" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Análise de
 Componentes Principais</h2>
+<p><br></p>
+<p>A Análise de Componentes Principais (ACP) é uma técnica de Análise
+Multivariada que consiste em transformar um conjunto original de
+variáveis em outro conjunto, os Componentes Principais (CP) com
+propriedades específicas. Os CP’s são combinações lineares das variáveis
+originais e são estimados de forma a captar o máximo da variação total
+dos dados. O processo de estimação é tal que o primeiro CP capta o
+máximo de variância possível, o segundo capta o máximo possível do
+restante de variância, o terceiro o máximo possível do restante de
+variância, e assim sucessivamente.</p>
 <p>Segundo Mingoti (2005, p. 59), <em>“seu objetivo principal é o de
 explicar a estrutura de variância-covariância de um vetor aleatório,
 composto de p-variáveis aleatórias, através da construção de combinações
@@ -1742,13 +1754,13 @@ lineares construídas’, ou seja, a informação contida nas p-variáveis
 originais é substituída pela informação contida em k (k<span class="math inline">\(&lt;\)</span>p) componentes principais não
 correlacionados”</em> (MINGOTI, 2005, p. 59).</p>
 <p>Matricialmente, pode ser escrita como <span class="math inline">\(y=a&#39;x\)</span> onde os a’s são as constantes
-que definem a combinação linear e são determinados de forma a atender às
+que definem a combinação linear e são determinadas de forma a atender às
 características da combinação linear que se deseja. Como as variáveis
 são dadas, os coeficientes a’s são determinados de forma a atender às
 restrições estabelecidas, ou seja, o princípio da técnica. As
 combinações lineares tem média e variância definidas, respectivamente,
 por <span class="math inline">\(E(Y)=a&#39;\mu\)</span> e <span class="math inline">\(V(Y)=a&#39;\sum a\)</span>.</p>
-<p>Mais de uma combinação linear podem ser definidas de um conjunto de
+<p>Mais de uma combinação linear pode ser definida de um conjunto de
 variáveis. Em geral, com <em>p</em> variáveis pode-se formar p
 combinaçoes lineares diferentes.</p>
 <p>Variáveis quantitativas usadas em análise multivariada são,
@@ -1760,7 +1772,7 @@ eliminam diferenças em tamanho (escala) outras reduzem tamanho e
 variabilidade para uma escala comum.</p>
 <p>O método mais usado para tornar variáveis comparáveis é a
 Padronização que consiste em subtrair a média e dividir pelo desvio
-padrão.Além de simplificar cálculos e manipulações matemáticas a
+padrão. Além de simplificar cálculos e manipulações matemáticas, a
 padronização de variáveis é importante para resolver o problema de
 unidades de medidas diferentes das variáveis e do desbalanceamento entre
 as variâncias. Toda variável padronizada tem média zero, variância igual
@@ -1774,7 +1786,7 @@ uma desestabilização na Análise de Componentes Principais e também na
 Análise Fatorial. A solução é padronizar as variáveis de forma que
 tenham média zero e variância unitária;</p>
 <p>A Análise passa a ser determinar as <em>raízes características</em> e
-os <em>vetores característicos</em> da matriz de correlações <span class="math inline">\(\mathbf{R}\)</span>.</p>
+os <em>vetores característicos</em> da matriz de correlações.</p>
 <p>Sobre raízes e vetores característicos, uma matriz quadrada A tem
 raízes características <span class="math inline">\(\lambda_i\)</span> e
 vetores característicos <span class="math inline">\(X_i\)</span> dados
@@ -1793,13 +1805,13 @@ AX - \lambda X= 0
 \]</span> <span class="math display">\[
 (A- \lambda I)X= 0
 \]</span></p>
-<p>sendo que a equação é verdadeira para qualquer <span class="math inline">\(\lambda\)</span> se <span class="math inline">\(X=0\)</span>, mas solução não interessa. Para se
-ter uma solução <span class="math inline">\(x \neq 0\)</span>, a inversa
-de <span class="math inline">\((A- \lambda I)X\)</span> nao deve existir
-e, para isto, o seu determinante precisa ser igual a zero. Assim,
-pode-se entender <span class="math inline">\(\lambda\)</span> (raízes
-características) como os valores que zeram o determinante da equação
-característica.</p>
+<p>sendo que a equação é verdadeira para qualquer <span class="math inline">\(\lambda\)</span> se <span class="math inline">\(X=0\)</span>, mas esta solução não interessa. Para
+se ter uma solução <span class="math inline">\(X \neq 0\)</span>, a
+inversa de <span class="math inline">\((A- \lambda I)X\)</span> não deve
+existir e, para isto, o seu determinante precisa ser igual a zero.
+Assim, pode-se entender <span class="math inline">\(\lambda\)</span>
+(raízes características) como os valores que zeram o determinante da
+equação característica.</p>
 <p>Os vetores característicos não são únicos, devendo ser normalizados.
 Para cada raiz característica existe um vetor característico que é
 encontrado resolvendo a expressão <span class="math inline">\((A-\lambda_i I)X_i=0\)</span>.</p>
@@ -1825,59 +1837,100 @@ ou <span class="math inline">\(-1\)</span>;</li>
 <li>Os vetores característicos de matrizes simétricas são ortogonais, ou
 seja, não correlacionados.</li>
 </ol>
+<p><br></p>
+<div id="obtenção-componentes-principais" class="section level3" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Obtenção
+Componentes Principais</h3>
+<p><br></p>
 <p>Considere um vetor de p variáveis padronizadas dada por</p>
 <p><span class="math display">\[
 \mathbf{Z&#39;}=\left[\begin{array}{llll}
 Z_1 &amp;Z_2 &amp;\dots &amp;Z_p
 \end{array}\right]
-\]</span></p>
-<p>e uma matriz <span class="math inline">\(\mathbf{P_{pxp}}\)</span> de
-correlações das variáveis <span class="math inline">\(\mathbf{Z}\)</span>. Pela decomposição
-espectral</p>
+\]</span> os CP’s são combinações lineares dos <span class="math inline">\(Z&#39;s\)</span></p>
 <p><span class="math display">\[
-P=E \Lambda E&#39;=\sum_{i=1}^{p}\lambda_ie_ie&#39;_i
+Y_j=a&#39;_jZ=a_{j1}Z_1+a_{j2}Z_2+\dots+a_{jp}Z_p
 \]</span></p>
+<p>sendo que é possível ter até <em>p</em> CP’s, com o primeiro tendo a
+maior variância, o segundo CP tendo a segunda maior variância e sendo
+ortogonal ao primeiro, etc. Neste caso, a variância de <span class="math inline">\(Z_i\)</span> é dada por <span class="math inline">\(V(Z_i)=a_i&#39;\sum a_i\)</span> e o que deve ser
+feito é encontrar os coeficientes de <span class="math inline">\(a_i\)</span> das combinaçoes lineares de forma a
+satisfazer as condições acima definidas.</p>
+<p>É possível demonstrar (LIMA, 2015) que a solução se resume em
+encontrar as raízes características <span class="math inline">\((\lambda_i)\)</span> e os vetores característicos
+<span class="math inline">\((a_i)\)</span> da matriz var-cov <span class="math inline">\((\sum)\)</span> das variáveis. Os coeficientes dos
+CP’s são os elementos dos vetores característicos <span class="math inline">\((a_i)\)</span>.</p>
+<p>Além disso, é possível demonstrar que <span class="math inline">\(\sum a_i= \lambda a_i\)</span> e,
+consequentemente,</p>
 <p><span class="math display">\[
-e&#39;_ie_j=\delta_{ij} \qquad (ortogonais)
+V(Z_i)=a_i&#39;\sum a_i = a_i&#39;\lambda a_i = \lambda a_i&#39;a_i
 \]</span></p>
+<p>e que a <span class="math inline">\(V(Z_i) = \lambda _i\)</span> pois
+pela ortogonalidade <span class="math inline">\(a_i&#39;a_i =1\)</span>.
+O que significa que a variância do componente i é igual a sua raiz
+característica.</p>
+<p>Finalmente, dado que <span class="math inline">\(a_i&#39;a_k
+=0\)</span>, a covariância entre os CP’s é igual a zero, ou seja, não
+são correlacionados, são ortogonais.</p>
+<p>Como dito anteriormente, com p variáveis é possível ter até o CP’s.
+Assim, a variância total dos p componentes tem que ser igual a variância
+total das variáveis Z.</p>
+<p>A importância relativa de cada componente é dada pelo percentual de
+sua variância em relação à variância total, ou seja, é a variância
+explicada ou captada por ele. Assim, a importância relativa de <span class="math inline">\(Z_k\)</span> é dada por <span class="math inline">\(( \lambda_k / \sum_{i}^{p} \lambda_i)100\)</span>.
+Se um, dois ou três componentes captam grande parcela da variância dos
+dados, pode-se concentrar a análise neste número menor de variáveis.</p>
+<p>Como a idéia da ACP é redução da massa de dados para uma dimensão
+mais adequada para análise, se faz necessário decidir quantos CP’s usar.
+Com p variáveis deve-se manter k componentes, sendo <span class="math inline">\(k&lt;q\)</span>. A determinação de k não é uma
+decisão estatística porque não se tem um modelo adequado para tal e por
+isso é feita de forma prática. Utiliza-se os seguintes critérios:</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Dada a importância relativa de cada componente, manter o número
+de componentes que captam “certa” percentagem da variância dos dados,
+com <span class="math inline">\(70%\)</span> sendo um valor de
+referência;</p></li>
+<li><p>Desconsiderar os componentes com variância inferior à variância
+média das variáveis originais.</p></li>
+</ol>
+<p><br></p>
+</div>
+<div id="interpretação-dos-coeficientes-do-componente-principal" class="section level3" number="2.1.2">
+<h3><span class="header-section-number">2.1.2</span> Interpretação dos
+Coeficientes do Componente Principal</h3>
+<p><br></p>
+<p>Os coeficientes dos componentes indicam a importância da variável
+para o componente. Isto possibilita atribuir um significado ao
+componente. Além do coeficiente pode-se calcular a correlação entre o
+componente e a variável. A correlação entre <span class="math inline">\(Y_j\)</span> e a variável padronizada <span class="math inline">\(Z_i\)</span> é igual a:</p>
 <p><span class="math display">\[
-\lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_p \geq 0
-\]</span></p>
-<p>A Análise passa a ser determinar as raízes <span class="math inline">\((\lambda)\)</span> e vetores caraterísticos <span class="math inline">\((\mathbf{e_i})\)</span> da matriz de correlações
-<span class="math inline">\(\mathbf{P}\)</span>.</p>
-<p>Os CP (componentes principais) são combinações lineares de <span class="math inline">\(\mathbf{Z}\)</span>.</p>
-<p><span class="math display">\[
-Y_j=e&#39;_jZ=e_{j1}Z_1+e_{j2}Z_2+\dots+e_{jp}Z_p
-\]</span></p>
-<p>sendo que a variância de <span class="math inline">\(Y_j\)</span> é
-igual a <span class="math inline">\(\lambda_j\)</span>, com <span class="math inline">\(j=1,2,\dots,p\)</span> e a covariância entre <span class="math inline">\(Y_j\)</span> e <span class="math inline">\(Y_k\)</span> é igual a zero, para qualquer <span class="math inline">\(j \neq k\)</span>.</p>
-<p>A correlação entre <span class="math inline">\(Y_j\)</span> e a
-variável padronizada <span class="math inline">\(Z_i\)</span> é igual
-a:</p>
-<p><span class="math display">\[
-r_{Y_j,Z_j}=r_{Y_j,X_i}=e_{ji}\sqrt{\lambda_j}
+r_{Y_i,Z_k}=\frac{a_{ik}}{\sqrt{\sigma_k^2}}\sqrt{\lambda_i}
 \]</span> e, então, as variáveis <span class="math inline">\(\mathbf{Z}\)</span> com os maiores coeficientes na
 componente principal <span class="math inline">\(\mathbf{Y_j}\)</span>
-são as mais correlacionadas com a componente;</p>
-<div id="análise-de-componentes-principais---escores" class="section level3" number="2.1.1">
-<h3><span class="header-section-number">2.1.1</span> Análise de
+são as mais correlacionadas com a componente. A matriz de correlações
+entre as variáveis e os componentes é bastante importante para entender
+os componentes e lhes atribuir um nome. É possível também testar a
+significância estatística de cada peso ou coeficiente do componente. A
+hipótese nula é de que o coeficiente é estatisticamente igual a
+zero.</p>
+<p><br></p>
+</div>
+<div id="análise-de-componentes-principais---escores" class="section level3" number="2.1.3">
+<h3><span class="header-section-number">2.1.3</span> Análise de
 Componentes Principais - Escores</h3>
-<p>A variância total de <span class="math inline">\(\mathbf{Z}\)</span>
-é igual ao traço da matriz <span class="math inline">\(\mathbf{P_{pxp}}\)</span>. A proporção de
-variância total explicada pela j-ésima CP é igual a <span class="math inline">\(\frac{\lambda_j}{p}\)</span>, <span class="math inline">\(j=1,2, \dots,p\)</span>.</p>
+<p><br></p>
 <p>Escore é o valor de <span class="math inline">\(\mathbf{Y_i}\)</span>
 para cada observação. Estes servem para, por exemplo:</p>
 <ol style="list-style-type: upper-roman">
 <li>comparar ou ordenar as observações;</li>
-<li>Análise de cluster ou regressão</li>
-<li>A matriz de correlações entre as variáveis e os componentes é
-bastante importante para entender os componentes e lhes atribuir um
-nome.</li>
+<li>Análise de cluster ou regressão;</li>
 </ol>
+<p><br></p>
 </div>
 </div>
 <div id="análise-fatorial" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Análise Fatorial</h2>
+<p><br></p>
 <p>Análise fatorial exploratória é uma técnica estatística para redução
 de dados. Ela reduz o número de variáveis (p) na Análise descrevendo
 combinações lineares destas (fatores) que contém a maior parte das
