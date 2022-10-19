@@ -255,7 +255,7 @@ setwd('/Users/jricardofl/Dropbox/tempecon/multivariada')
 library(car)
 library(dplyr)
 library(corrplot)
-library(ggplot2)
+library(graphics)
 library(ade4)
 library(grid)
 library(MVar.pt)
@@ -297,6 +297,11 @@ screeplot(resultados.pca, type="lines")
 #E possivel escolher com base no Autovalor >1
 (resultados.pca$sdev^2)
 
+# Reestimando com apenas 1 componente
+resultados.pca2 <- prcomp(dados.pad, scale = TRUE, rank. = 1) #PCA
+
+resultados.pca2
+
 #Raizes Caracteristicas - 1 Forma
 (resultados.pca$sdev)^2
 summary(resultados.pca)
@@ -307,7 +312,7 @@ resultados.pca$x
 #Correlaçoes entre as variaveis e os escores
 cor(dados, resultados.pca$x)
 
-# Gráfico 
+# Gráficos
 biplot(resultados.pca)
 ```
 
@@ -317,7 +322,7 @@ biplot(resultados.pca)
 
 <br>
 
-Análise fatorial exploratória é uma técnica estatística para redução de dados. Ela reduz o número de variáveis (p) na Análise descrevendo combinações lineares destas (fatores) que contém a maior parte das informações das variáveis originais e que possam ter interpretações significativas. Estes fatores não são correlacionados entre si;
+Análise fatorial exploratória é uma técnica estatística para redução de dados. Ela reduz o número de variáveis (p) na Análise descrevendo combinações lineares destas (fatores) que contém a maior parte das informações das variáveis originais e que possam ter interpretações significativas. Estes fatores não são correlacionados entre si.
 
 Seja $\mathbf{x}$ um vetor aleatório px1 com média $\mathbf{\mu}$ e matriz de variância covariância dada por $\mathbf{\Sigma}$. A variância total de cada variável pode ser separada em três parcelas: fatores comuns, fatores específicos e um erro. 
 
@@ -326,7 +331,8 @@ Suponha que as inter-relações entre os elementos de $\mathbf{x}$ possam ser ex
 $$
 \mathbf{x}=\mathbf{\mu}+\mathbf{\Lambda} \mathbf{f}+ \mathbf{\epsilon}
 $$
-onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos $f_1, \dots, f_k$ sendo denominados fatores comuns (comunalidade); $\Lambda$ é uma matriz de constantes desconhecidas pxk chamadas de cargas fatoriais; e os elementos $\epsilon_1, \dots, \epsilon_p$ do px1 vetor aleatório $\boldmath{\epsilon}$ são chamados de fatores específicos (unicidade) e erro. Assume-se que  $\mathbf{f}$ e $\boldmath{\epsilon}$ não são correlacionados.
+
+onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos $f_1, \dots, f_k$ sendo denominados fatores comuns (comunalidade); $\Lambda$ é uma matriz de constantes desconhecidas pxk chamadas de cargas fatoriais; e os elementos $\epsilon_1, \dots, \epsilon_p$ do px1 vetor aleatório $\mathbf{\epsilon}$ são chamados de fatores específicos (unicidade) e erro. Assume-se que  $\mathbf{f}$ e $mathbf{\epsilon}$ não são correlacionados.
 	
 ## Pressupostos do Modelo de Análise Fatorial
 
@@ -357,7 +363,7 @@ onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos
 
 
 
-## Rotação de Fatores}
+## Rotação de Fatores
 
 
 	 Consiste em ``modificar'' as cargas fatoriais, ou seja, calcular nova matriz A. O objetivo é obter uma matriz de cargas fatoriais de mais fçcil interpretação, onde cada fator se relaciona mais distintamente com certo grupo de variáveis;
@@ -367,7 +373,7 @@ onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos
 
 
 
-## Escores Fatoriais}
+## Escores Fatoriais
 
 
 	 Escores fatoriais são os valores de cada fator para cada observação;
@@ -376,19 +382,13 @@ onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos
 
 
 
-## Análise da Adequabilidade }
+## Análise da Adequabilidade 
 
 
  \textbf{Matriz de Correlações}: examinar a matriz de correlações simples, procurando visualizar algum padrão de relacionamento entre as variáveis; devem existir grupos de variáveis correlacionadas;
  \textbf{Matriz Anti-Imagem}: Matriz de correlações Parciais com sinais invertidos
  \textbf{Teste de esfericidade de Bartlett}: testa se a matriz de correlações é estatisticamente igual a uma matriz identidade. Se for, não é boa para Análise Fatorial. O que se busca, então, é rejeitar a hipótese nula de que a matriz de correlação verdadeira é uma matriz identidade;
 	
-
-
-
-## Análise da Adequabilidade }
-
-
 	 \textbf{	Medida KMO (Kayser-Meyer-Olkin)}: é um índice que compara correlações simples e parciais:
 	$$
 	\mathbf{KMO}=\frac{\sum_{i=1}^{p}\sum_{j=1}^{p}r_{ij}^2}{\sum_{i=1}^{p}\sum_{j=1}^{p}r_{ij}^2+\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2}
@@ -396,11 +396,11 @@ onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos
 	 em que $r_{ij}$ é o coeficiente de correlação simples e $a_{ij}$ é a correlação parcial.
 	 Quanto mais $\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2$ for próximo de 0, mais o valor de $\mathbf{KMO}$ se aproximarç de 1 e mais adequados os dados serão para a Análise fatorial. Valores abaixo de 0,6 são considerados ruins para a Análise fatorial.
 	
-# Análise de Clusters
+## Análise de Clusters
 
 Segundo Mingoti (2005), ``a Análise de agrupamentos, também conhecida como Análise de conglomerados, classificação ou cluster, tem como objetivo dividir os elementos da amostra, ou população, em grupos de forma que os elementos pertencentes a um mesmo grupo sejam similares entre si com respeito às variáveis (características) que neles foram medidas, e os elementos em grupos diferentes sejam heterogêneos em relação a estas mesmas características''.
 	
-## Etapas da Análise de Cluster
+### Etapas da Análise de Cluster
 
 
 		Escolher um critério de parecença (similaridade ou dissimilaridade);
@@ -412,7 +412,7 @@ Segundo Mingoti (2005), ``a Análise de agrupamentos, também conhecida como An�
 
 
 
-## Medidas de Parecença}
+### Medidas de Parecença}
 
 Valor numérico que quantifica o grau de semelhança entre um par de objetos. Pode ser de dois tipos: similaridade ou dissimilaridade. Para quantitativas, as distâncias são as mais usadas. São medidas de dissimilaridade.
 
@@ -424,25 +424,15 @@ Valor numérico que quantifica o grau de semelhança entre um par de objetos. Po
 
 
 
-## Técnicas para construção de Conglomerados (Clusters)}
+### Técnicas para construção de Conglomerados (Clusters)
 
 Para Mingoti (2005), ``as técnicas de conglomerados ou clusters são frequentemente classificadas em dois tipos: técnicas hierçrquicas e não hierçrquicas, sendo que as hierçrquicas são classificadas em aglomerativas e divisivas''. 
 
 	 Os \textbf{Métodos hierçrquicos aglomerativos} partem do princípio de que no início do processo de agrupamento têm-se n conglomerados (cada elemento é um conglomerado). Em cada passo do algoritmo, os elementos vão sendo agrupados, formando novos conglomerados até o ponto em que todos os elementos estão num único grupo. 
-	
-
-
-
-## Técnicas para construção de Conglomerados (Clusters)}
-
-
 	 Em termos de variabilidade, no estçgio inicial é a menor possível e no final, a mçxima possível, pois todos os elementos estão agrupados em apenas 1 cluster. Se dois elementos aparecem juntos num mesmo grupo em algum estçgio do processo de agrupamento, permanecerão juntos até o final, ou seja, não podem mais ser separados. 
 	 Devido a esta propriedade, denominada hierarquia, se pode construiu o \textbf{Dendograma}. Dendograma é um grçfico em forma de çrvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade. 
 	
-
-
-
-## Métodos de agrupamento}
+## Métodos de agrupamento
 
 
 	 Método de ligação simples;
@@ -455,26 +445,18 @@ Segundo Mingoti (2005), ``os métodos de ligação simples, completa e da média
 
 
 
-## Métodos Não-Hierçrquicos}
+## Métodos Não-Hierárquicos
 
 
 		São métodos de partição de ``n'' objetos em ``k'' grupos;
 	 Os ``k'' grupos são pré-determinados;
 	 A cada passo verifica-se se os objetos estão alocados da ``melhor'' maneira;
 	 Função objetivo: procura minimizar a variância dentro do grupo e maximizar a variância entre os grupos;
-	
-
-
-
-## Métodos Não-Hierçrquicos}
-
 
 	 Não fornece dendograma. Isto porque se, em algum passo do algoritmo dois elementos tiverem sido colocados num mesmo cluster, não necessariamente ``estarão juntos'' na partição final;
 	 Bom quando se tem um grande número de observações;
 	 O problema principal aqui não é o número de grupos e sim a melhor forma de alocar os elementos em k grupos.
 	 O método mais usado é o das k-médias (k-means). 
 	
-
-
 <br>
 <br>
