@@ -165,7 +165,7 @@ As raízes características possuem um conjunto de propriedades:
 2) $det(A) = \Pi_{i=1}^{p}$. Se alguma raiz característica for zero, o determinante de A é zero e a matriz não possui inversa; 
 3) Para uma matriz diagonal, as raízes são os elementos da diagonal principal;
 4) Para uma matriz triangular, as raízes são os elementos da diagonal principal;
-5) Raízes de A são iguais as de $A'$
+5) Raízes de A são iguais as de $A'$;
 6) As raízes de $A^{-1}$ são iguais a $1/ \lambda_i$, mas os vetores característicos são os mesmos;
 7) Se A é ortogonal, $\lambda_i=1$ ou $-1$;
 8) Se A é uma matriz idempotente, $\lambda_i=1$ ou $0$;
@@ -202,17 +202,17 @@ $$
 V(Z_i)=a_i'\sum a_i = a_i'\lambda a_i = \lambda a_i'a_i 
 $$
 
-e que a $V(Z_i) = \lambda _i$ pois pela ortogonalidade $a_i'a_i =1$. O que significa que a variância do componente i é igual a sua raiz característica. 
+e que a $V(Z_i) = \lambda _i$ pois pela ortogonalidade $a_i'a_i =1$, o que significa que a variância do componente i é igual a sua raiz característica. 
 
 Finalmente, dado que $a_i'a_k =0$, a covariância entre os CP's é igual a zero, ou seja, não são correlacionados, são ortogonais. 
 
-Como dito anteriormente, com p  variáveis é possível ter até o CP's. Assim, a variância total dos p componentes tem que ser igual a variância total das variáveis Z. 
+Como dito anteriormente, com *p* variáveis é possível ter até *p* CP's. Assim, a variância total dos *p* componentes tem que ser igual a variância total das variáveis Z. 
 
 A importância relativa de cada componente é dada pelo percentual de sua variância em relação à variância total, ou seja, é a variância explicada ou captada por ele. Assim, a importância relativa de $Z_k$ é dada por $( \lambda_k / \sum_{i}^{p} \lambda_i)100$. Se um, dois ou três componentes captam grande parcela da variância dos dados, pode-se concentrar a análise neste número menor de variáveis.
 
 Como a idéia da ACP é redução da massa de dados para uma dimensão mais adequada para análise, se faz necessário decidir quantos CP’s usar. Com p variáveis deve-se manter k componentes, sendo $k<q$. A determinação de k não é uma decisão estatística porque não se tem um modelo adequado para tal e por isso é feita de forma prática. Utiliza-se os seguintes critérios:
 
-a) Dada a importância relativa de cada componente, manter o número de componentes que captam "certa" percentagem da variância dos dados, com $70%$ sendo um valor de referência;
+a) Dada a importância relativa de cada componente, manter o número de componentes que captam "certa" percentagem da variância dos dados, com $70\%$ sendo um valor de referência;
 
 b) Desconsiderar os componentes com variância inferior à variância média das variáveis originais.
 
@@ -239,7 +239,77 @@ importante para entender os componentes e lhes atribuir um nome. É possível ta
 Escore é o valor de $\mathbf{Y_i}$ para cada observação. Estes servem para, por exemplo:
 
 I) comparar ou ordenar as observações; 
-II) Análise de cluster ou regressão;
+II) Análise de cluster ou regressão.
+
+<br>
+
+### Demonstração de ACP no R
+
+<br>
+
+```  {r estat2, warning=FALSE, message=FALSE}
+#Direcionado o R para o Diretorio a ser trabalhado
+setwd('/Users/jricardofl/Dropbox/tempecon/multivariada')
+
+#Lendo os dados no R
+library(car)
+library(dplyr)
+library(corrplot)
+library(ggplot2)
+library(ade4)
+library(grid)
+library(MVar.pt)
+
+dados <- read.csv2("cprin.csv", header = TRUE, 
+                   sep=';', dec='.')
+dados <- dados[,-1]
+str(dados)
+
+# Nomes das Variaveis utilizadas 
+#x1 
+#x2	
+#x3	
+
+# ESTIMACAO DAS ESTATISTICAS DESCRITIVAS E CALCULO DA MATRIZ DE CORRELAÇOES
+summary(dados)
+desvpad <- apply(dados, 2, sd) #para calcular o desvio-padrao
+round(desvpad,2)
+
+# Matriz de Correlacoes
+matcor <- cor(dados)
+print(matcor, digits=4)
+corrplot(cor(dados), order="hclust", tl.col="black", tl.cex = .75)
+
+#Analise de componentes principais - dados devem ser padronizados
+#Padronizacao dos dados
+dados.pad <-as.data.frame(scale(dados))
+
+#Analise de Componentes principais com prcomp
+resultados.pca <- prcomp(dados.pad, scale = TRUE) #PCA
+
+#Resultados das combinaçoes lineares
+resultados.pca
+
+sum((resultados.pca$sdev)^2) #traco da matriz
+
+screeplot(resultados.pca, type="lines")
+
+#E possivel escolher com base no Autovalor >1
+(resultados.pca$sdev^2)
+
+#Raizes Caracteristicas - 1 Forma
+(resultados.pca$sdev)^2
+summary(resultados.pca)
+
+#Escores
+resultados.pca$x
+
+#Correlaçoes entre as variaveis e os escores
+cor(dados, resultados.pca$x)
+
+# Gráfico 
+biplot(resultados.pca)
+```
 
 <br>
 
@@ -258,7 +328,7 @@ $$
 $$
 onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos $f_1, \dots, f_k$ sendo denominados fatores comuns (comunalidade); $\Lambda$ é uma matriz de constantes desconhecidas pxk chamadas de cargas fatoriais; e os elementos $\epsilon_1, \dots, \epsilon_p$ do px1 vetor aleatório $\boldmath{\epsilon}$ são chamados de fatores específicos (unicidade) e erro. Assume-se que  $\mathbf{f}$ e $\boldmath{\epsilon}$ não são correlacionados.
 	
-## Pressupostos do Modelo de Análise Fatorial}
+## Pressupostos do Modelo de Análise Fatorial
 
 
 	 Os pressupostos do Modelo de Análise Fatorial podem ser resumidos em:
@@ -274,7 +344,7 @@ onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos
 
 
 
-## Modelo de Análise Fatorial}
+## Modelo de Análise Fatorial
 
 
 	 Existem diversas formas de estimar as cargas fatoriais: componentes principais, fator principal, mçxima verossimilhança são as principais, cujas explicações detalhadas podem ser encontradas em Mingoti (2005).
@@ -326,20 +396,11 @@ onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos
 	 em que $r_{ij}$ é o coeficiente de correlação simples e $a_{ij}$ é a correlação parcial.
 	 Quanto mais $\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2$ for próximo de 0, mais o valor de $\mathbf{KMO}$ se aproximarç de 1 e mais adequados os dados serão para a Análise fatorial. Valores abaixo de 0,6 são considerados ruins para a Análise fatorial.
 	
+# Análise de Clusters
 
-
-# Análise de Clusters}
-
-
-## Análise de Cluster }
-
-
-	 Segundo Mingoti (2005), ``a Análise de agrupamentos, também conhecida como Análise de conglomerados, classificação ou cluster, tem como objetivo dividir os elementos da amostra, ou população, em grupos de forma que os elementos pertencentes a um mesmo grupo sejam similares entre si com respeito às variáveis (características) que neles foram medidas, e os elementos em grupos diferentes sejam heterogêneos em relação a estas mesmas características''.
+Segundo Mingoti (2005), ``a Análise de agrupamentos, também conhecida como Análise de conglomerados, classificação ou cluster, tem como objetivo dividir os elementos da amostra, ou população, em grupos de forma que os elementos pertencentes a um mesmo grupo sejam similares entre si com respeito às variáveis (características) que neles foram medidas, e os elementos em grupos diferentes sejam heterogêneos em relação a estas mesmas características''.
 	
-
-
-
-## Etapas da Análise de Cluster }
+## Etapas da Análise de Cluster
 
 
 		Escolher um critério de parecença (similaridade ou dissimilaridade);
