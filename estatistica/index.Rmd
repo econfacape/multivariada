@@ -23,7 +23,7 @@ output:
 
 Consiste em um conjunto de métodos estatísticos usados para simplificar a interpretação de grandes conjuntos de dados. A aplicação pode ocorrer em diversas áreas do conhecimento.
 
-Segundo Mingoti (2005, p. 21), *"embora historicamente o uso de métodos multivariados esteja relacionado com trabalhos na Psicologia, Ciências Sociais e Biológicas, mais recentemente eles têm sido aplicados em um grande universo de área diferentes, como: Educação, Geologia, Química, Física, Engenharia, Ergonomia, etc."*. 
+Segundo Mingoti (2005, p. 21), *"embora historicamente o uso de métodos multivariados esteja relacionado com trabalhos na Psicologia, Ciências Sociais e Biológicas, mais recentemente eles têm sido aplicados em um grande universo de área diferentes, como: Educação, Geologia, Química, Física, Engenharia, Ergonomia, etc."*.
 
 Basicamente os **objetivos** são:
 
@@ -117,6 +117,8 @@ E também é importante revisar conceitos de álgebra matricial: vetores, matriz
 
 A Análise de Componentes Principais (ACP) é uma técnica de Análise Multivariada que consiste em transformar um conjunto original de variáveis em outro conjunto, os Componentes Principais (CP) com propriedades específicas. Os CP’s são combinações lineares das variáveis originais e são estimados de forma a captar o máximo da variação total dos dados. O processo de estimação é tal que o primeiro CP capta o máximo de variância possível, o segundo capta o máximo possível do restante de variância, o terceiro o máximo possível do restante de variância, e assim sucessivamente.
 
+A ACP é apropriada quando as variáveis sob investigação são todas de mesma natureza, de modo que não tenhamos, por exemplo, uma ou mais variáveis dependentes e um conjunto de covariáveis, como no caso de análise de regressão.
+
 Segundo Mingoti (2005, p. 59), *"seu objetivo principal é o de explicar a estrutura de variância-covariância de um vetor aleatório, composto de p-variáveis aleatórias, através da construção de combinações lineares das variáveis originais. Estas combinações lineares são chamadas de componentes principais e são não correlacionadas entre si"*.
 
 Uma combinação linear de vetores ou de variáveis é um novo vetor (ou nova variável) defindo por 
@@ -126,9 +128,13 @@ y=a_1x_1+a_2x_2+a_3x_3+ \dots + a_px_p
 $$
 *"Se temos p-variáveis originais é possível obter-se p componentes principais. No entanto, em geral deseja-se obter 'redução do número de variáveis a serem avaliadas e interpretação das combinações lineares construídas', ou seja, a informação contida nas p-variáveis originais é substituída pela informação contida em k (k$<$p) componentes principais não correlacionados"* (MINGOTI, 2005, p. 59).
 
+A ideia é que se algumas das variáveis originais são correlacionadas, elas estão, efetivamente, “dizendo a mesma coisa”. Nesse caso, um conjunto menor de variáveis, não-correlacionadas, pode ser tão eficaz quanto o conjunto de variáveis originais para explicar a estrutura de variância-covariância dos dados.
+
 Matricialmente, pode ser escrita como $y=a'x$ onde os a's são as constantes que definem a combinação linear e são determinadas de forma a atender às características da combinação linear que se deseja. Como as variáveis são dadas, os coeficientes a's são determinados de forma a atender às restrições estabelecidas, ou seja, o princípio da técnica. As combinações lineares tem média e variância definidas, respectivamente, por $E(Y)=a'\mu$ e $V(Y)=a'\sum a$. 
 
 Mais de uma combinação linear pode ser definida de um conjunto de variáveis. Em geral, com *p* variáveis pode-se formar p combinaçoes lineares diferentes. 
+
+A ACP transforma um conjunto de variáveis correlacionadas em um conjunto de variáveis não-correlacionadas. Assim, se as variáveis originais são aproximadamente não correlacionadas, não faz sentido ser feita uma ACP.
 
 Variáveis quantitativas usadas em análise multivariada são, geralmente, expressas em unidades diferentes. Diferenças de escalas afetam a contribuição da variável para a variância generalizada. Para usar essas variáveis em uma técnica multivariada elas precisam ser transformadas para uma escala comum. Entre os métodos usados alguns eliminam diferenças em tamanho (escala) outras reduzem tamanho e variabilidade para uma escala comum.
 
@@ -202,7 +208,7 @@ $$
 V(Z_i)=a_i'\sum a_i = a_i'\lambda a_i = \lambda a_i'a_i 
 $$
 
-e que a $V(Z_i) = \lambda _i$ pois pela ortogonalidade $a_i'a_i =1$, o que significa que a variância do componente i é igual a sua raiz característica. 
+e que a $V(Z_i) = \lambda _i$ pois pela ortogonalidade $a_i'a_i =1$ ($a_i'a_i=\sum_{p=1}^ja_{jp}^2$), o que significa que a variância do componente i é igual a sua raiz característica. 
 
 Finalmente, dado que $a_i'a_k =0$, a covariância entre os CP's é igual a zero, ou seja, não são correlacionados, são ortogonais. 
 
@@ -249,71 +255,116 @@ II) Análise de cluster ou regressão.
 
 ```  {r estat2, warning=FALSE, message=FALSE}
 #Direcionado o R para o Diretorio a ser trabalhado
-setwd('/Users/jricardofl/Dropbox/tempecon/multivariada')
+#setwd('/Users/jricardofl/Dropbox/tempecon/multivariada')
 
 #Lendo os dados no R
 library(car)
-library(dplyr)
+library(tidyverse)
 library(corrplot)
 library(graphics)
 library(ade4)
 library(grid)
 library(MVar.pt)
+library(factoextra)
 
-dados <- read.csv2("cprin.csv", header = TRUE, 
-                   sep=';', dec='.')
-dados <- dados[,-1]
+data(mtcars)
+
+#Format
+#A data frame with 32 observations on 11 (numeric) variables.
+
+#[, 1] mpg Milhas/(EUA) galão
+#[, 2] cil Número de cilindros
+#[, 3] disp Cilindradas cc
+#[, 4] HP Potência bruta
+#[, 5] drat Relação do eixo traseiro
+#[, 6] Peso em peso (1000 lbs)
+#[, 7] qsex tempo 1/4 de milha
+#[, 8] vs Motor (0 = em forma de V, 1 = reto)
+#[, 9] am Transmissão (0 = automática, 1 = manual)
+#[,10] gear Número de marchas para frente
+#[,11] carb Número de carburadores
+
+# Criando um objeto
+dados <- mtcars
+summary(dados) # estatística descritiva dos dados
+
+# Retirando as variáveis binárias
+dados <- mtcars %>% select(-vs, -am)
+
+# Verificação da estrutura dos dados
 str(dados)
-
-# Nomes das Variaveis utilizadas 
-#x1 
-#x2	
-#x3	
+head(dados)
+tail(dados)
 
 # ESTIMACAO DAS ESTATISTICAS DESCRITIVAS E CALCULO DA MATRIZ DE CORRELAÇOES
-summary(dados)
-desvpad <- apply(dados, 2, sd) #para calcular o desvio-padrao
+summary(dados) #sem as variáveis binárias
+desvpad <- sapply(dados, sd) #para calcular o desvio-padrao
 round(desvpad,2)
+cov(dados) #covariância
 
 # Matriz de Correlacoes
 matcor <- cor(dados)
 print(matcor, digits=4)
 corrplot(cor(dados), order="hclust", tl.col="black", tl.cex = .75)
 
-#Analise de componentes principais - dados devem ser padronizados
+#Análise de componentes principais - dados devem ser padronizados
 #Padronizacao dos dados
 dados.pad <-as.data.frame(scale(dados))
 
 #Analise de Componentes principais com prcomp
-resultados.pca <- prcomp(dados.pad, scale = TRUE) #PCA
-
-#Resultados das combinaçoes lineares
-resultados.pca
-
-sum((resultados.pca$sdev)^2) #traco da matriz
-
-screeplot(resultados.pca, type="lines")
-
-#E possivel escolher com base no Autovalor >1
-(resultados.pca$sdev^2)
-
-# Reestimando com apenas 1 componente
-resultados.pca2 <- prcomp(dados.pad, scale = TRUE, rank. = 1) #PCA
-
-resultados.pca2
+resultados.pca <- prcomp(dados.pad, scale = TRUE) #ACP
 
 #Raizes Caracteristicas - 1 Forma
 (resultados.pca$sdev)^2
+
 summary(resultados.pca)
 
-#Escores
-resultados.pca$x
+sum((resultados.pca$sdev)^2) #traco da matriz
+
+#É possivel escolher o número de CP com base no Autovalor >1
+(resultados.pca$sdev^2)
+
+# Gráfico do percentual de variância explicada
+screeplot(resultados.pca, type="lines")
+fviz_eig(resultados.pca)
+
+```
+
+<br>
+
+Se observa que 62,84% da variabilidade total dos dados são explicados pela primeira componente
+principal. Além disso, a segunda componente principal explica 23,13% da variação total. As duas primeiras componentes principais explicam juntas 85,98% da variabilidade total dos dados. 
+
+<br>
+
+```  {r estat3, warning=FALSE, message=FALSE}
+#Resultados das combinações lineares
+resultados.pca
+
+#Escores para cada observação
+resultados.pca$x # valores das componentes principais
 
 #Correlaçoes entre as variaveis e os escores
 cor(dados, resultados.pca$x)
 
 # Gráficos
-biplot(resultados.pca)
+
+fviz_pca_ind(resultados.pca,
+             col.ind = "cos2", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+             repel = TRUE, 
+             legend.title = "Representation")
+
+fviz_pca_var(resultados.pca, 
+             col.var = "contrib", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+             repel = TRUE, 
+             legend.title = "Contribution")
+
+fviz_pca_biplot(resultados.pca, 
+                repel = TRUE, 
+                col.var = "#2E9FDF", 
+                col.ind = "#696969")
 ```
 
 <br>
