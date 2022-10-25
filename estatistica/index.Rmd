@@ -346,9 +346,15 @@ resultados.pca$x # valores das componentes principais
 
 #Correlaçoes entre as variaveis e os escores
 cor(dados, resultados.pca$x)
+```
 
-# Gráficos
+<br>
 
+### Análise Gráfica da ACP
+
+<br>
+
+```  {r estat4, warning=FALSE, message=FALSE}
 fviz_pca_ind(resultados.pca,
              col.ind = "cos2", 
              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
@@ -365,6 +371,25 @@ fviz_pca_biplot(resultados.pca,
                 repel = TRUE, 
                 col.var = "#2E9FDF", 
                 col.ind = "#696969")
+
+dados <- mtcars %>% mutate(
+  am = case_when(am == 0 ~ "Automatic", 
+                 TRUE ~ "Manual"))
+
+fviz_pca_ind(resultados.pca, 
+             col.ind = dados$am, 
+             palette = c("#00AFBB", "#FC4E07"), 
+             addEllipses = TRUE, 
+             ellipse.type = "confidence", 
+             legend.title = "Engine shape", 
+             repel = TRUE)
+
+fviz_pca_biplot(resultados.pca, 
+                repel = TRUE, 
+                col.var = "black", 
+                col.ind = as.factor(dados$am), 
+                addEllipses = TRUE, 
+                legend.title = "Transmissão")
 ```
 
 <br>
@@ -373,7 +398,7 @@ fviz_pca_biplot(resultados.pca,
 
 <br>
 
-Análise fatorial exploratória é uma técnica estatística para redução de dados. Ela reduz o número de variáveis (p) na Análise descrevendo combinações lineares destas (fatores) que contém a maior parte das informações das variáveis originais e que possam ter interpretações significativas. Estes fatores não são correlacionados entre si.
+*Análise fatorial exploratória* é uma técnica estatística para redução de dados. Ela reduz o número de variáveis (p) na Análise descrevendo combinações lineares destas (fatores) que contém a maior parte das informações das variáveis originais e que possam ter interpretações significativas. Estes fatores não são correlacionados entre si.
 
 Seja $\mathbf{x}$ um vetor aleatório px1 com média $\mathbf{\mu}$ e matriz de variância covariância dada por $\mathbf{\Sigma}$. A variância total de cada variável pode ser separada em três parcelas: fatores comuns, fatores específicos e um erro. 
 
@@ -383,69 +408,85 @@ $$
 \mathbf{x}=\mathbf{\mu}+\mathbf{\Lambda} \mathbf{f}+ \mathbf{\epsilon}
 $$
 
-onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos $f_1, \dots, f_k$ sendo denominados fatores comuns (comunalidade); $\Lambda$ é uma matriz de constantes desconhecidas pxk chamadas de cargas fatoriais; e os elementos $\epsilon_1, \dots, \epsilon_p$ do px1 vetor aleatório $\mathbf{\epsilon}$ são chamados de fatores específicos (unicidade) e erro. Assume-se que  $\mathbf{f}$ e $mathbf{\epsilon}$ não são correlacionados.
-	
-## Pressupostos do Modelo de Análise Fatorial
+onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos $f_1, \dots, f_k$ sendo denominados fatores comuns (comunalidade); $\Lambda$ é uma matriz de constantes desconhecidas pxk chamadas de cargas fatoriais; e os elementos $\epsilon_1, \dots, \epsilon_p$ do px1 vetor aleatório $\mathbf{\epsilon}$ são chamados de fatores específicos (unicidade) e erro. Assume-se que  $\mathbf{f}$ e $\mathbf{\epsilon}$ não são correlacionados.
 
+<br>
 
-	 Os pressupostos do Modelo de Análise Fatorial podem ser resumidos em:
-	  $\mathbf{f} \sim (\mathbf{0},\mathbf{I}) $;
-	 $\epsilon \sim (\mathbf{0},\mathbf{\Psi})$, em que $\mathbf{\Psi}=diag(\psi_1,\dots,\psi_p)$;
-	  $\mathbf{f}$ e $\boldmath{\epsilon}$ são independentes;
-	 No modelo fatorial, a matriz $\mathbf{\Sigma}$ é decomposta como
-	$$
+### Pressupostos do Modelo de Análise Fatorial
+<br>
+
+Os pressupostos do Modelo de Análise Fatorial podem ser resumidos em:
+
+1. $\mathbf{f} \sim (\mathbf{0},\mathbf{I})$;
+
+2. $\epsilon \sim (\mathbf{0},\mathbf{\Psi})$, em que $\mathbf{\Psi}=diag(\psi_1,\dots,\psi_p)$;
+	 
+3. $\mathbf{f}$ e $\mathbf{\epsilon}$ são independentes;
+
+No modelo fatorial, a matriz $\mathbf{\Sigma}$ é decomposta como
+
+$$
 \mathbf{\Sigma}=\mathbf{\Lambda}\mathbf{\Phi}\mathbf{\Lambda}'+\mathbf{\Psi}
-	$$
-	 sendo que o modelo não rotacionado assume que os fatores não são correlacionados $\mathbf{\Phi}=\mathbf{I}$. O problema, então, é estimar $\mathbf{\Lambda}$ e $\mathbf{\Psi}$ que reproduzam $\mathbf{\Sigma}$.
+$$
+sendo que o modelo não rotacionado assume que os fatores não são correlacionados $\mathbf{\Phi}=\mathbf{I}$. O problema, então, é estimar $\mathbf{\Lambda}$ e $\mathbf{\Psi}$ que reproduzam $\mathbf{\Sigma}$.
+
+<br>
+
+### Modelo de Análise Fatorial
+
+<br>
+
+Existem diversas formas de estimar as cargas fatoriais: componentes principais, fator principal, mçxima verossimilhança são as principais, cujas explicações detalhadas podem ser encontradas em Mingoti (2005).
+
+Um termo importante na Análise Fatorial é a Comunalidade, ou seja, o somatório das correlações dos fatores com a variável "**i**".
+
+$$
+\mathbf{h_i^2}=a_{i1}^2+a_{i2}^2+\dots+a_{ir}^2
+$$
+A Unicidade ($\mathbf{\Psi}$) é dada por $\mathbf{\Psi}=1-\mathbf{h_i^2}$. 
+
+<br>
+
+### Rotação de Fatores
+
+<br>
+
+Consiste em "modificar" as cargas fatoriais, ou seja, calcular nova matriz A. O objetivo é obter uma matriz de cargas fatoriais de mais fçcil interpretação, onde cada fator se relaciona mais distintamente com certo grupo de variáveis.
+
+Existem diversos métodos de rotação, tanto ortogonal quanto obliqua. Entretanto, o método de rotação mais utilizado é o Varimax, o qual permite que os coeficientes de correlação entre os indicadores e os fatores fiquem o mais próximo possível de zero ou de 1 em valor absoluto, facilitando a interpretação.
+
+O método de Rotação Varimax "forma um novo sistema de eixos ortogonais com o mesmo número de fatores e permite que o grupo de variáveis apareça com maior nitidez, facilitando a interpretação e Análise" (ZAMBRANO e LIMA, 2004). 
+
+<br>	 
+
+### Escores Fatoriais
+
+<br>
+
+Escores fatoriais são os valores de cada fator para cada observação. São importantes para mapeamento das observações e para serem utilizadas em outras técnicas, como cluster, regressão, etc 
+
+<br>	
+
+### Análise da Adequabilidade 
+
+<br>
+
+1. **Matriz de Correlações**: examinar a matriz de correlações simples, procurando visualizar algum padrão de relacionamento entre as variáveis; devem existir grupos de variáveis correlacionadas;
+
+2. **Matriz Anti-Imagem**: Matriz de correlações Parciais com sinais invertidos
+
+3. **Teste de esfericidade de Bartlett**: testa se a matriz de correlações é estatisticamente igual a uma matriz identidade. Se for, não é boa para Análise Fatorial. O que se busca, então, é rejeitar a hipótese nula de que a matriz de correlação verdadeira é uma matriz identidade;
 	
+4. **Medida KMO (Kayser-Meyer-Olkin)**: é um índice que compara correlações simples e parciais:
 
+$$
+\mathbf{KMO}=\frac{\sum_{i=1}^{p}\sum_{j=1}^{p}r_{ij}^2}{\sum_{i=1}^{p}\sum_{j=1}^{p}r_{ij}^2+\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2}
+$$
+em que $r_{ij}$ é o coeficiente de correlação simples e $a_{ij}$ é a correlação parcial.
 
+Quanto mais $\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2$ for próximo de 0, mais o valor de $\mathbf{KMO}$ se aproximarç de 1 e mais adequados os dados serão para a Análise fatorial. Valores abaixo de 0,6 são considerados ruins para a Análise fatorial.
 
-## Modelo de Análise Fatorial
-
-
-	 Existem diversas formas de estimar as cargas fatoriais: componentes principais, fator principal, mçxima verossimilhança são as principais, cujas explicações detalhadas podem ser encontradas em Mingoti (2005).
-	 Um termo importante na Análise Fatorial é a Comunalidade, ou seja, o somatório das correlações dos fatores com a variável ``\textbf{i}''.
-		$$
-	\mathbf{h_i^2}=a_{i1}^2+a_{i2}^2+\dots+a_{ir}^2
-	$$
-	 A Unicidade ($\mathbf{\Psi}$) é dada por $\mathbf{\Psi}=1-\mathbf{h_i^2}$ 
-	
-
-
-
-## Rotação de Fatores
-
-
-	 Consiste em ``modificar'' as cargas fatoriais, ou seja, calcular nova matriz A. O objetivo é obter uma matriz de cargas fatoriais de mais fçcil interpretação, onde cada fator se relaciona mais distintamente com certo grupo de variáveis;
-	 Existem diversos métodos de rotação, tanto ortogonal quanto obliqua. Entretanto, o método de rotação mais utilizado é o Varimax, o qual permite que os coeficientes de correlação entre os indicadores e os fatores fiquem o mais próximo possível de zero ou de 1 em valor absoluto, facilitando a interpretação;
-	  O método de Rotação Varimax ``forma um novo sistema de eixos ortogonais com o mesmo número de fatores e permite que o grupo de variáveis apareça com maior nitidez, facilitando a interpretação e Análise'' (ZAMBRANO e LIMA, 2004). 
-	
-
-
-
-## Escores Fatoriais
-
-
-	 Escores fatoriais são os valores de cada fator para cada observação;
-	 São importantes para mapeamento das observações e para serem utilizadas em outras técnicas, como cluster, regressão, etc 
-	
-
-
-
-## Análise da Adequabilidade 
-
-
- \textbf{Matriz de Correlações}: examinar a matriz de correlações simples, procurando visualizar algum padrão de relacionamento entre as variáveis; devem existir grupos de variáveis correlacionadas;
- \textbf{Matriz Anti-Imagem}: Matriz de correlações Parciais com sinais invertidos
- \textbf{Teste de esfericidade de Bartlett}: testa se a matriz de correlações é estatisticamente igual a uma matriz identidade. Se for, não é boa para Análise Fatorial. O que se busca, então, é rejeitar a hipótese nula de que a matriz de correlação verdadeira é uma matriz identidade;
-	
-	 \textbf{	Medida KMO (Kayser-Meyer-Olkin)}: é um índice que compara correlações simples e parciais:
-	$$
-	\mathbf{KMO}=\frac{\sum_{i=1}^{p}\sum_{j=1}^{p}r_{ij}^2}{\sum_{i=1}^{p}\sum_{j=1}^{p}r_{ij}^2+\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2}
-	$$
-	 em que $r_{ij}$ é o coeficiente de correlação simples e $a_{ij}$ é a correlação parcial.
-	 Quanto mais $\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2$ for próximo de 0, mais o valor de $\mathbf{KMO}$ se aproximarç de 1 e mais adequados os dados serão para a Análise fatorial. Valores abaixo de 0,6 são considerados ruins para a Análise fatorial.
+<br>
 	
 ## Análise de Clusters
 
@@ -463,7 +504,7 @@ Segundo Mingoti (2005), ``a Análise de agrupamentos, também conhecida como An�
 
 
 
-### Medidas de Parecença}
+### Medidas de Parecença
 
 Valor numérico que quantifica o grau de semelhança entre um par de objetos. Pode ser de dois tipos: similaridade ou dissimilaridade. Para quantitativas, as distâncias são as mais usadas. São medidas de dissimilaridade.
 
@@ -479,9 +520,9 @@ Valor numérico que quantifica o grau de semelhança entre um par de objetos. Po
 
 Para Mingoti (2005), ``as técnicas de conglomerados ou clusters são frequentemente classificadas em dois tipos: técnicas hierçrquicas e não hierçrquicas, sendo que as hierçrquicas são classificadas em aglomerativas e divisivas''. 
 
-	 Os \textbf{Métodos hierçrquicos aglomerativos} partem do princípio de que no início do processo de agrupamento têm-se n conglomerados (cada elemento é um conglomerado). Em cada passo do algoritmo, os elementos vão sendo agrupados, formando novos conglomerados até o ponto em que todos os elementos estão num único grupo. 
+	 Os **Métodos hierçrquicos aglomerativos} partem do princípio de que no início do processo de agrupamento têm-se n conglomerados (cada elemento é um conglomerado). Em cada passo do algoritmo, os elementos vão sendo agrupados, formando novos conglomerados até o ponto em que todos os elementos estão num único grupo. 
 	 Em termos de variabilidade, no estçgio inicial é a menor possível e no final, a mçxima possível, pois todos os elementos estão agrupados em apenas 1 cluster. Se dois elementos aparecem juntos num mesmo grupo em algum estçgio do processo de agrupamento, permanecerão juntos até o final, ou seja, não podem mais ser separados. 
-	 Devido a esta propriedade, denominada hierarquia, se pode construiu o \textbf{Dendograma}. Dendograma é um grçfico em forma de çrvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade. 
+	 Devido a esta propriedade, denominada hierarquia, se pode construiu o **Dendograma}. Dendograma é um grçfico em forma de çrvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade. 
 	
 ## Métodos de agrupamento
 
