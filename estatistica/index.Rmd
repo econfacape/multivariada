@@ -29,9 +29,9 @@ Basicamente os **objetivos** são:
 
 a) Redução ou simplificação da base de dados sem sacrificar informação importante;
  
-b) Ordenação e agrupamento (classificação) - criar grupos de objetos (ou variáveis) semelhantes com base em vçrias características. Por isso é multivariada;
+b) Ordenação e agrupamento (classificação) - criar grupos de objetos (ou variáveis) semelhantes com base em várias características. Por isso é multivariada;
 
-c) Investigação da estrutura de dependência entre as variáveis. Podemos ter um conjunto de dados relacionados com tecnologias utilizadas nas fazendas e outro conjunto relacionados com característica do dono da propriedade. A dependência entre estes grupos de variáveis pode indicar porque algumas propriedades usam mais tecnologias do que outras;
+c) Investigação da estrutura de dependência entre as variáveis. Podemos ter um conjunto de dados relacionados com tecnologias utilizadas nas fazendas e outro conjunto de dados relacionados com característica do dono da propriedade. A dependência entre estes grupos de variáveis pode indicar porque algumas propriedades usam mais tecnologias do que outras;
 
 d) Predição - realizar previsões;
  
@@ -101,11 +101,11 @@ summary(dados)
 
 <br>
 
-Pode-se considerar que a estatística multivariada se divide em dois grupos: o primeiro consiste nas técnicas de simplificação da estrutura de variabilidade dos dados. Principalmente, fazem parte deste grupo a **Análise de Componentes Principais, Análise Fatorial, Correlações Canônicas, Cluster e Discriminante**;
+Pode-se considerar que a estatística multivariada se divide em dois grupos: o primeiro consiste nas técnicas de simplificação da estrutura de variabilidade dos dados. Principalmente, fazem parte deste grupo a **Análise de Componentes Principais, Análise Fatorial, Correlações Canônicas, Cluster e Discriminante**.
 	
 O segundo grupo concentra os métodos de estimação de parâmetros, como na análise de **Regressão Simples** e **Múltipla**. 
 
-Para um estudo aprofundado das técnicas de *Análise Multivariada*, é importante revisar conceitos de Estatística Básica: média, variância, desvio padrão, covariância, correlação seriam as mais relevantes;
+Para um estudo aprofundado das técnicas de *Análise Multivariada*, é importante revisar conceitos de Estatística Básica: média, variância, desvio padrão, covariância, correlação seriam as mais relevantes.
 
 E também é importante revisar conceitos de álgebra matricial: vetores, matrizes, combinações lineares, dependência linear, raízes e vetores característicos e decomposição espectral, basicamente. 
 
@@ -138,11 +138,11 @@ A ACP transforma um conjunto de variáveis correlacionadas em um conjunto de var
 
 Variáveis quantitativas usadas em análise multivariada são, geralmente, expressas em unidades diferentes. Diferenças de escalas afetam a contribuição da variável para a variância generalizada. Para usar essas variáveis em uma técnica multivariada elas precisam ser transformadas para uma escala comum. Entre os métodos usados alguns eliminam diferenças em tamanho (escala) outras reduzem tamanho e variabilidade para uma escala comum.
 
-O método mais usado para tornar variáveis comparáveis é a Padronização que consiste em subtrair a média e dividir pelo desvio padrão. Além de simplificar cálculos e manipulações matemáticas, a padronização de variáveis é importante para resolver o problema de unidades de medidas diferentes das variáveis e do desbalanceamento entre as variâncias. Toda variável padronizada tem média zero, variância igual a um e é adimensional. 
+O método mais usado para tornar variáveis comparáveis é a *Padronização*, que consiste em subtrair a média e dividir pelo desvio padrão. Além de simplificar cálculos e manipulações matemáticas, a padronização de variáveis é importante para resolver o problema de unidades de medidas diferentes das variáveis e do desbalanceamento entre as variâncias. Toda variável padronizada tem média zero, variância igual a um e é adimensional. 
 
 Uma questão importante é que a covariância entre variáveis padronizadas é igual a correlação entre variáveis originais. Assim, usar a matriz de correlações das variáveis ao invés da matriz var-cov é o mesmo que trabalhar com variáveis padronizadas. 
 
-Existe uma tendência para que a variável com maior volatilidade cause uma desestabilização na Análise de Componentes Principais e também na Análise Fatorial. A solução é padronizar as variáveis de forma que tenham média zero e variância unitária;
+Existe uma tendência para que a variável com maior volatilidade cause uma desestabilização na Análise de Componentes Principais e também na Análise Fatorial. A solução é padronizar as variáveis de forma que tenham média zero e variância unitária.
 
 A Análise passa a ser determinar as *raízes características* e os *vetores característicos* da matriz de correlações. 
 
@@ -161,7 +161,7 @@ $$
 (A- \lambda I)X= 0
 $$
 
-sendo que a equação é verdadeira para qualquer $\lambda$ se $X=0$, mas esta solução não interessa. Para se ter uma solução $X \neq 0$, a inversa de $(A- \lambda I)X$ não deve existir e, para isto, o seu determinante precisa ser igual a zero. Assim, pode-se entender $\lambda$ (raízes características) como os valores que zeram o determinante da equação característica.
+sendo que a equação é verdadeira para qualquer $\lambda$ se $X=0$, mas esta solução não interessa. Para se ter uma solução $X \neq 0$, a inversa da equação característica $(A- \lambda I)$ não deve existir e, para isto, o seu determinante precisa ser igual a zero. Assim, pode-se entender $\lambda$ (raízes características) como os valores que zeram o determinante da equação característica.
 
 Os vetores característicos não são únicos, devendo ser normalizados. Para cada raiz característica existe um vetor característico que é encontrado resolvendo a expressão $(A-\lambda_i I)X_i=0$. 
 
@@ -377,10 +377,9 @@ dados <- mtcars %>% mutate(
                  TRUE ~ "Manual"))
 
 fviz_pca_ind(resultados.pca, 
-             col.ind = dados$am, 
+            col.ind = dados$am, 
              palette = c("#00AFBB", "#FC4E07"), 
              addEllipses = TRUE, 
-             ellipse.type = "confidence", 
              legend.title = "Engine shape", 
              repel = TRUE)
 
@@ -490,50 +489,62 @@ Quanto mais $\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2$ for próximo de 0, mais o val
 	
 ## Análise de Clusters
 
-Segundo Mingoti (2005), ``a Análise de agrupamentos, também conhecida como Análise de conglomerados, classificação ou cluster, tem como objetivo dividir os elementos da amostra, ou população, em grupos de forma que os elementos pertencentes a um mesmo grupo sejam similares entre si com respeito às variáveis (características) que neles foram medidas, e os elementos em grupos diferentes sejam heterogêneos em relação a estas mesmas características''.
-	
+<br>
+
+Segundo Mingoti (2005), "a Análise de Agrupamentos, também conhecida como Análise de Conglomerados, Classificação ou Cluster, tem como objetivo dividir os elementos da amostra, ou população, em grupos de forma que os elementos pertencentes a um mesmo grupo sejam similares entre si com respeito às variáveis (características) que neles foram medidas, e os elementos em grupos diferentes sejam heterogêneos em relação a estas mesmas características".
+
+<br>
+
 ### Etapas da Análise de Cluster
 
+<br>
 
-		Escolher um critério de parecença (similaridade ou dissimilaridade);
-	 Formação dos grupos (escolher o algoritmo de agrupamento)
-	 Definição de número de grupos: pode ser a posteriori, como resultado da Análise ou a priori, dado o conhecimento ou conveniência da Análise;
-	 validação do agrupamento: critério do pesquisador;
-	 Interpretação e Análise: pode-se fazer estatística descritiva, diferença de médias, etc.	
+I. Escolher um critério de parecença (similaridade ou dissimilaridade);
+II. Formação dos grupos (escolher o algoritmo de agrupamento)
+III. Definição de número de grupos: pode ser a posteriori, como resultado da Análise ou a priori, dado o conhecimento ou conveniência da Análise;
+IV. Validação do agrupamento: critério do pesquisador;
+V. Interpretação e Análise: pode-se fazer estatística descritiva, diferença de médias, etc.	
 	
-
-
+<br>
 
 ### Medidas de Parecença
 
+<br>
+
 Valor numérico que quantifica o grau de semelhança entre um par de objetos. Pode ser de dois tipos: similaridade ou dissimilaridade. Para quantitativas, as distâncias são as mais usadas. São medidas de dissimilaridade.
 
-	 Distancia Euclidiana;
-	  Distancia Euclidiana Quadrçtica;
-	 Distancia Euclidiana Ponderada;
-	 Distância de Minkowsky (city-block)
+I. Distancia Euclidiana;
+II. Distancia Euclidiana Quadrçtica;
+III. Distancia Euclidiana Ponderada;
+IV. Distância de Minkowsky (city-block)
 	
-
-
+<br>
 
 ### Técnicas para construção de Conglomerados (Clusters)
 
-Para Mingoti (2005), ``as técnicas de conglomerados ou clusters são frequentemente classificadas em dois tipos: técnicas hierçrquicas e não hierçrquicas, sendo que as hierçrquicas são classificadas em aglomerativas e divisivas''. 
+<br>
 
-	 Os **Métodos hierçrquicos aglomerativos} partem do princípio de que no início do processo de agrupamento têm-se n conglomerados (cada elemento é um conglomerado). Em cada passo do algoritmo, os elementos vão sendo agrupados, formando novos conglomerados até o ponto em que todos os elementos estão num único grupo. 
-	 Em termos de variabilidade, no estçgio inicial é a menor possível e no final, a mçxima possível, pois todos os elementos estão agrupados em apenas 1 cluster. Se dois elementos aparecem juntos num mesmo grupo em algum estçgio do processo de agrupamento, permanecerão juntos até o final, ou seja, não podem mais ser separados. 
-	 Devido a esta propriedade, denominada hierarquia, se pode construiu o **Dendograma}. Dendograma é um grçfico em forma de çrvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade. 
+Para Mingoti (2005), "as técnicas de conglomerados ou clusters são frequentemente classificadas em dois tipos: técnicas hierárquicas e não hierárquicas, sendo que as hierçrquicas são classificadas em aglomerativas e divisivas". 
+
+Os **Métodos hierárquicos aglomerativos} partem do princípio de que no início do processo de agrupamento têm-se n conglomerados (cada elemento é um conglomerado). Em cada passo do algoritmo, os elementos vão sendo agrupados, formando novos conglomerados até o ponto em que todos os elementos estão num único grupo. 
+
+Em termos de variabilidade, no estçgio inicial é a menor possível e no final, a mçxima possível, pois todos os elementos estão agrupados em apenas 1 cluster. Se dois elementos aparecem juntos num mesmo grupo em algum estçgio do processo de agrupamento, permanecerão juntos até o final, ou seja, não podem mais ser separados. 
+
+Devido a esta propriedade, denominada hierarquia, se pode construiu o **Dendograma**. Dendograma é um grçfico em forma de çrvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade. 
+
+<br>
 	
 ## Métodos de agrupamento
 
+<br>
 
-	 Método de ligação simples;
-	 Método de ligação completa ou do vizinho mais distante;
-	 Método da média das distâncias (average linkage);
-	 Método dos centróides;
-	 Método de Ward
+I. Método de ligação simples;
+II. Método de ligação completa ou do vizinho mais distante;
+III. Método da média das distâncias (average linkage);
+IV. Método dos centróides;
+V. Método de Ward.
 	
-Segundo Mingoti (2005), ``os métodos de ligação simples, completa e da média podem ser utilizados tanto para variáveis quantitativas, quanto qualitativas, ao contrçrio dos métodos do centróide e de Ward que são apropriados apenas para variáveis quantitativas, jç que têm como base a comparação de vetores de médias''. 
+Segundo Mingoti (2005), "os métodos de ligação simples, completa e da média podem ser utilizados tanto para variáveis quantitativas, quanto qualitativas, ao contrçrio dos métodos do centróide e de Ward que são apropriados apenas para variáveis quantitativas, já que têm como base a comparação de vetores de médias". 
 
 
 
