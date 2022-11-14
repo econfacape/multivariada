@@ -488,7 +488,79 @@ Existem diversas formas de estimar as cargas fatoriais: componentes principais, 
 
 O método dos **Componentes Principais** é o mais usado e tem como base o uso das raízes características e vetores característicos relacionados com r<p componentes para estimar $\Lambda$. O método do **Fator Principal** é uma extensão do método de Componentes Principais e o de **Máxima Verossimilhança** maximiza uma função de verossimilhança formada com a pressuposição de que o vetor de variáveis aleatórias X segue distribuição normal p-variada com vetor de médias $\mu$ e matriz de variâncias e covariâncias $\mathbf{\Sigma}$.
 
+O método dos componentes principais parte da *decomposição espectral* da matriz de variâncias e covariâncias $\mathbf{\Sigma}$. Assim, é necessário informar que a *decomposição espectral* de uma matriz é uma operação que relaciona a matriz com seus autovalores e seus autovetores. 
 
+Considere A uma matriz $p_xp$ simétrica com raízes características $\lambda_p$ e vetores característicos $x_p$. A decomposição espectral de A é dada por
+
+$$
+A=\sum \lambda_i x_i x_i'
+$$
+com i variando de 1 a p. A decomposição pode ser representada por $A=P \Lambda P'$ em que P é uma matriz cujas colunas são os vetores característicos normalizados de A e $\Lambda$ é uma matriz diagonal com as raízes características de A na diagonal principal. Dessa relação tem-se, também, que $\Lambda=PAP'$ que é uma operação denominada diagonalização de A.
+
+Pelo teorema da decomposição espectral, a matriz de correlação amostral ou a matriz de variâncias e covariâncias pode ser decomposta como a soma de p matrizes, cada uma relacionada com um autovetor da matriz $\mathbf{\Sigma}$.
+
+$$
+\Sigma=P \Lambda P'=\sum \lambda_i x_i x_i'
+$$
+com i variando de 1 a p. Com p componentes, a matriz $\mathbf{\Sigma}$ é totalmente reproduzida. Para r < p, pode-se escrever 
+
+$$
+\Sigma=P \Lambda P'=\sum_{j=1}^r \lambda_j x_j x_j' + \sum_{j=r+1}^p \lambda_j x_j x_j'
+$$
+
+Cada parcela desta soma envolve uma matriz de dimensão $p_xp$ correspondente a informação da j-ésima componente fazendo com que a variabilidade das variáveis seja representada pela soma da variabilidade relacionada com cada componente. Assim, pode-se escrever
+
+
+$$
+\Sigma=\sum_{j=1}^r \lambda_j x_j x_j' + \sum_{j=r+1}^p \lambda_j x_j x_j'=P_1 \Lambda_1 P_1'+P_2 \Lambda_2 P_2'
+$$
+e pode-se considerar uma aproximação da matriz de correlações $\mathbf{\Sigma}$ dada por
+
+$$
+\mathbf{\Sigma} \approx P_1 \Lambda_1 P_1'=\sum_{j=1}^r \lambda_j x_j x_j'
+$$
+o que possibilita estimar as matrizes $\Lambda$ e $\Psi$ por meio de raízes e vetores característicos de $\mathbf{\Sigma}$.
+
+Pela decomposição espectral ainda é possível escrever 
+
+$$
+\mathbf{\Sigma} \approx P_1 \Lambda_1^{1/2} \Lambda_1^{1/2}P_1'
+$$
+e definir por $A=P_1 \Lambda_1^{1/2}$ e por $A'=\Lambda_1^{1/2}P_1'$
+
+Esta aproximação de $\mathbf{\Sigma}$ considera que os fatores específicos são de menor importância. Incluindo os fatores específicos a aproximação de $\mathbf{\Sigma}$ fica 
+
+$$
+\mathbf{\Sigma} \approx AA' + \Psi
+$$
+e a matriz $\Psi$, que é diagonal, pode ser estimada por 
+
+$$
+\Psi = diag(R-AA')
+$$
+
+A matriz de resíduos resultante do ajustamento do modelo é definida por
+
+$$
+RES= \mathbf{\Sigma} - (AA'+\Psi)
+$$
+
+que serve como critério de avaliação do modelo. Valores pequenos, próximos de zero, indicam bom ajustamento. Esta matriz só é nula quando todos os "p" fatores são extraídos, o que não é o desejado na prática. Através destes procedimentos os elementos da diagonal da matriz $\mathbf{\Sigma}$ (variâncias) são exatamente reproduzidos por $AA'+\Psi$. Entretanto, o mesmo não ocorre para os elementos fora da diagonal principal (correlações).
+
+Todo o conhecimento de Componentes Principais se aplica neste caso com os componentes agora denominados fatores.
+
+<br>
+
+### Demonstração de Anaálise Fatorial no R
+
+<br>
+
+```  {r estat5, warning=FALSE, message=FALSE}
+#Direcionado o R para o Diretorio a ser trabalhado
+#setwd('/Users/jricardofl/Dropbox/tempecon/multivariada')
+
+#Lendo os dados no R
+```
 
 <br>
 
