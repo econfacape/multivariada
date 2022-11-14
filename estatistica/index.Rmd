@@ -551,15 +551,105 @@ Todo o conhecimento de Componentes Principais se aplica neste caso com os compon
 
 <br>
 
-### Demonstração de Anaálise Fatorial no R
+### Demonstração de Análise Fatorial no R
 
 <br>
 
 ```  {r estat5, warning=FALSE, message=FALSE}
 #Direcionado o R para o Diretorio a ser trabalhado
-#setwd('/Users/jricardofl/Dropbox/tempecon/multivariada')
+setwd('/Users/jricardofl/Dropbox/tempecon/multivariada')
+
+library(tidyverse)
+library(skimr)
 
 #Lendo os dados no R
+dados <- read.csv2('winequality-red.csv', sep=";", dec=".")
+dados <- dados %>% 
+  select(-quality) #retira a variável quality
+
+attach(dados)
+glimpse(dados)
+
+head(dados)
+tail(dados)
+
+# Estatística descritiva das variáveis
+summary(dados)
+skim(dados)
+```
+
+O banco de dados é composto por 1599 observações e 12 variáveis: acidez fixa, acidez volátil, ácido cítrico, açucar residual, cloretos, dióxido de
+enxofre livre, dióxido de enxofre total, densidade, Ph, sulfatos, álcool.
+
+```  {r estat6, warning=FALSE, message=FALSE}
+library(corrplot)
+corrplot(cor(dados), order="hclust", tl.col="black", tl.cex = .75)
+
+#Obtenção do Modelo Fatorial Ortogonal
+
+#Analise Fatorial - dados devem ser padronizados
+#Padronizaçao dos dados
+dados.pad <-as.data.frame(scale(dados))
+
+s <- cov(dados.pad) #matriz de cov com var pad = mat correlaçoes origem
+
+#Autovalores e Autovetores da Matriz de Covariancias
+lambda <-eigen(s)$values
+lambda #
+evec <-eigen(s)$vectors
+evec
+evec[,1:4]
+
+#Matriz de Cargas Fatoriais L modelo completo
+L <- sqrt(lambda)*t(evec)
+L <- t(L) #Extracao dos Fatores
+L[,1:4] #4 primeiros fatores
+LLT <- L%*%t(L)
+LLT
+
+#Proporção da variabilidade explicada por cada componente
+round(lambda/sum(lambda),4)
+
+#Matriz de Cargas Fatoriais m =4
+Lm4 <- L[,1:4]
+LLTm4 <- Lm4%*%t(Lm4)
+LLTm4
+
+#Matriz PSI - Unicidade
+psi <- diag(diag(s-LLTm4))
+psi
+
+#Matriz Residual
+s-(LLTm4+psi)
+```
+
+```{r estat7, warning=FALSE, message=FALSE}
+#2 Forma de fazer a Analise Fatorial
+matcor <- cor(dados)
+
+k <- 4
+dados.pca <- prcomp(dados.pad, scale = TRUE) #PCA
+carfat <- dados.pca$rotation[, 1:k] %*% diag(dados.pca$sdev[1:k])
+colnames(carfat) <- paste("Fator", 1:k, sep = " ")
+
+#Cargas Fatoriais com autovalor maior do que 1
+carfat
+
+#Comunalidade e Unicidade
+comum <- rowSums(carfat^2)
+vespec <- diag(matcor) - comum
+estimat <- cbind(comum, vespec, diag(matcor))
+rownames(estimat) <- colnames(dados)
+colnames(estimat) <- c("Comunalidade", "Unicidade", "Variância")
+estimat
+#Matriz de Resíduos
+resid <- matcor - (carfat %*% t(carfat) + diag(vespec))
+resid
+
+# Estimativas das cargas fatoriais das variaveis 
+
+plot(carfat, pch = 20, col = "red", xlab = "Fator 1", ylab = "Fator 2")
+text(carfat, rownames(carfat), adj = 1)
 ```
 
 <br>
