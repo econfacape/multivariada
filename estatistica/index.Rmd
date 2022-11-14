@@ -397,17 +397,35 @@ fviz_pca_biplot(resultados.pca,
 
 <br>
 
-*Análise fatorial exploratória* é uma técnica estatística para redução de dados. Ela reduz o número de variáveis (p) na Análise descrevendo combinações lineares destas (fatores) que contém a maior parte das informações das variáveis originais e que possam ter interpretações significativas. Estes fatores não são correlacionados entre si.
+*Análise Fatorial* é uma técnica estatística para redução de dados. Ela reduz o número de variáveis (p) na análise, descrevendo combinações lineares destas (fatores) que contém a maior parte das informações das variáveis originais e que possam ter interpretações significativas. Estes fatores não são correlacionados entre si.
 
-Seja $\mathbf{x}$ um vetor aleatório px1 com média $\mathbf{\mu}$ e matriz de variância covariância dada por $\mathbf{\Sigma}$. A variância total de cada variável pode ser separada em três parcelas: fatores comuns, fatores específicos e um erro. 
+O "fator" é uma variável latente (não observada) que representa uma característica marcante dos dados. O objetivo da *Análise Fatorial* é identificar os r<p fatores e relacioná-los com as variáveis originais.
 
-Suponha que as inter-relações entre os elementos de $\mathbf{x}$ possam ser explicadas por um modelo fatorial
+Segundo Mingoti (2005, p. 99), "a análise fatorial tem como objetivo principal descrever a variabilidade original do vetor de variáveis X, em termos de um número menor r de variáveis aleatórias, chamadas de fatores comuns e que estão relacionadas com o vetor original X através de um modelo linear. Neste modelo, parte da variabilidade de X é atribuída aos fatores comuns, sendo o restante da variabilidade de X atribuído às variáveis que não foram incluídas no modelo, ou seja, ao erro aleatório". 
+
+Existem dois enfoques diferentes para *Análise Fatorial*: A **Análise Fatorial Exploratória** e a **Análise Fatorial Confirmatória**. A **Análise Fatorial Exploratória** objetiva determinar dimensões latentes dos dados denominadas fatores partindo-se de um conjunto de variáveis e a solução conduz a uma relação de todas as variáveis com todos os fatores. Na **Analise Fatorial Confirmatória** parte-se de um conjunto de variáveis e de um conjunto de hipóteses sobre o número de fatores e sobre quais variáveis se relacionam com quais fatores. O objetivo da análise é "confirmar" se as variáveis formam os fatores da forma como foi assumido. A formulação do modelo é baseada em uma teoria que será testada com a análise. O modelo especifica quais variáveis são relacionadas com quais fatores e se os fatores são correlacionados. A definição dos fatores é feita antes do ajustamento do modelo.
+
+Seja $\mathbf{x}$ um vetor aleatório $p_x1$ com média $\mathbf{\mu}$ e matriz de variância-covariância dada por $\mathbf{\Sigma}$. A variância total de cada variável pode ser separada em três parcelas: fatores comuns (influenciam duas ou mais variáveis), fatores específicos (contribuem para a variação de uma única variável) e um erro. 
+
+Assim, a variação total vai ser a soma da variação comum (comunalidade), da variação específica (unicidade) e do erro. 
 
 $$
-\mathbf{x}=\mathbf{\mu}+\mathbf{\Lambda} \mathbf{f}+ \mathbf{\epsilon}
+\mathbf{x}=\mathbf{\Lambda} \mathbf{f}+ \mathbf{\epsilon}
 $$
 
-onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos $f_1, \dots, f_k$ sendo denominados fatores comuns (comunalidade); $\Lambda$ é uma matriz de constantes desconhecidas pxk chamadas de cargas fatoriais; e os elementos $\epsilon_1, \dots, \epsilon_p$ do px1 vetor aleatório $\mathbf{\epsilon}$ são chamados de fatores específicos (unicidade) e erro. Assume-se que  $\mathbf{f}$ e $\mathbf{\epsilon}$ não são correlacionados.
+onde $\mathbf{f}$ é um vetor aleatório de ordem $k_x1$($k<p$), com os elementos $f_1, \dots, f_k$ sendo denominados fatores comuns (comunalidade); $\Lambda$ é uma matriz de constantes desconhecidas $p_xk$ chamadas de cargas fatoriais (ou coeficientes de correlação entre as variáveis e os fatores quando as variáveis são padronizadas); e os elementos $\epsilon_1, \dots, \epsilon_p$ do $p_x1$ vetor aleatório $\mathbf{\epsilon}$ são chamados de fatores específicos (unicidade) e erro. Assume-se que  $\mathbf{f}$ e $\mathbf{\epsilon}$ não são correlacionados.
+
+\begin{cases}
+X_1=a_{11}F_1+a_{12}F_2+a_{13}F_3+ \dots +a_{1r}F_r+\epsilon_1 \\
+X_2=a_{21}F_1+a_{22}F_2+a_{23}F_3+ \dots +a_{2r}F_r+\epsilon_2 \\
+X_3=a_{31}F_1+a_{32}F_2+a_{33}F_3+ \dots +a_{3r}F_r+\epsilon_3 \\
+. \\
+. \\ 
+. \\
+X_p=a_{p1}F_1+a_{p2}F_2+a_{p3}F_3+ \dots +a_{pr}F_r+\epsilon_p \\
+\end{cases}
+
+O modelo tem como objetivo explicar o comportamento das p variáveis em função de r<p fatores comuns (desconhecidos) e de um termo de erro composto de unicidade (fatores específicos) e erro aleatório. O processo de estimação que consiste em determinar a matriz de cargas fatoriais $\mathbf{\Lambda}$.
 
 <br>
 
@@ -416,33 +434,61 @@ onde $\mathbf{f}$ é um vetor aleatório de ordem k x 1($k<p$), com os elementos
 
 Os pressupostos do Modelo de Análise Fatorial podem ser resumidos em:
 
-1. $\mathbf{f} \sim (\mathbf{0},\mathbf{I})$;
+1. $\mathbf{f} \sim (\mathbf{0},\mathbf{I})$, ou seja, os fatores possuem média zero e variância constante igual a um e não são autocorrelacionados;
 
-2. $\epsilon \sim (\mathbf{0},\mathbf{\Psi})$, em que $\mathbf{\Psi}=diag(\psi_1,\dots,\psi_p)$;
+2. $\epsilon \sim (\mathbf{0},\mathbf{\Psi})$, em que $\mathbf{\Psi}=diag(\psi_1,\dots,\psi_p)$, ou seja, os erros tem média zero e podem ter variâncias diferentes, mas não correlacionados;
 	 
-3. $\mathbf{f}$ e $\mathbf{\epsilon}$ são independentes;
+3. $\mathbf{f}$ e $\mathbf{\epsilon}$ são independentes, ou seja, os fatores comuns são independentes dos fatores específicos e erros;
+
+A Análise Fatorial pode ser feita com a matriz de variâncias e covariâncias ou com a matriz de correlações. Como normalmente é recomendado o uso de variáveis padronizadas para contornar o problema de unidades de medidas diferentes e a influência que uma variável com variância grande pode ter na determinação das cargas fatoriais, a Análise Fatorial é, quase sempre, feita com a matriz de correlações $\mathbf{\Sigma}$ .
 
 No modelo fatorial, a matriz $\mathbf{\Sigma}$ é decomposta como
 
 $$
+\mathbf{\Sigma}=E(xx')
+$$
+
+$$
+\mathbf{\Sigma}=E[(\mathbf{\Lambda} \mathbf{f}+ \mathbf{\epsilon})(\mathbf{\Lambda} \mathbf{f}+ \mathbf{\epsilon})']
+$$
+
+sendo que é possível demonstrar que o resultado desta decomposição é 
+
+$$
 \mathbf{\Sigma}=\mathbf{\Lambda}\mathbf{\Phi}\mathbf{\Lambda}'+\mathbf{\Psi}
 $$
-sendo que o modelo não rotacionado assume que os fatores não são correlacionados $\mathbf{\Phi}=\mathbf{I}$. O problema, então, é estimar $\mathbf{\Lambda}$ e $\mathbf{\Psi}$ que reproduzam $\mathbf{\Sigma}$.
+Este resultado, que é derivado com base nas pressuposições do modelo, diz que a matriz de correlações pode ser decomposta em duas parcelas, uma relacionada com a comunalidade e outra com a unicidade. O modelo assume que os fatores não são correlacionados $\mathbf{\Phi}=\mathbf{I}$. 
 
-<br>
-
-### Modelo de Análise Fatorial
-
-<br>
-
-Existem diversas formas de estimar as cargas fatoriais: componentes principais, fator principal, mçxima verossimilhança são as principais, cujas explicações detalhadas podem ser encontradas em Mingoti (2005).
-
-Um termo importante na Análise Fatorial é a Comunalidade, ou seja, o somatório das correlações dos fatores com a variável "**i**".
+Um termo importante na Análise Fatorial é a comunalidade, ou seja, o somatório das correlações dos fatores com a variável "**i**".
 
 $$
 \mathbf{h_i^2}=a_{i1}^2+a_{i2}^2+\dots+a_{ir}^2
 $$
+
 A Unicidade ($\mathbf{\Psi}$) é dada por $\mathbf{\Psi}=1-\mathbf{h_i^2}$. 
+
+A comunalidade é a parcela da variância de X explicada pelos r fatores e a unicidade é a parcela não explicada. 
+
+<br>
+
+### Estimação das Cargas Fatoriais
+
+<br>
+
+Dado o modelo 
+
+$$
+\mathbf{x}=\mathbf{\Lambda} \mathbf{f}+ \mathbf{\epsilon}
+$$
+pode-se entender o x como a variável dependente e o f como as variáveis explicativas, $\Lambda$ como como os coefientes e $\epsilon$ como os erros de um modelo de regressão múltipla. 
+
+O problema, então, é estimar $\mathbf{\Lambda}$ e $\mathbf{\Psi}$ que reproduzam $\mathbf{\Sigma}$ com um número de fatores r menor que o número de variáveis originais p, mas apenas o x é conhecido.
+
+Existem diversas formas de estimar as cargas fatoriais: componentes principais, fator principal, máxima verossimilhança são as principais, cujas explicações mais detalhadas podem ser encontradas em Mingoti (2005).
+
+O método dos **Componentes Principais** é o mais usado e tem como base o uso das raízes características e vetores característicos relacionados com r<p componentes para estimar $\Lambda$. O método do **Fator Principal** é uma extensão do método de Componentes Principais e o de **Máxima Verossimilhança** maximiza uma função de verossimilhança formada com a pressuposição de que o vetor de variáveis aleatórias X segue distribuição normal p-variada com vetor de médias $\mu$ e matriz de variâncias e covariâncias $\mathbf{\Sigma}$.
+
+
 
 <br>
 
@@ -450,9 +496,9 @@ A Unicidade ($\mathbf{\Psi}$) é dada por $\mathbf{\Psi}=1-\mathbf{h_i^2}$.
 
 <br>
 
-Consiste em "modificar" as cargas fatoriais, ou seja, calcular nova matriz A. O objetivo é obter uma matriz de cargas fatoriais de mais fçcil interpretação, onde cada fator se relaciona mais distintamente com certo grupo de variáveis.
+Consiste em "modificar" as cargas fatoriais, ou seja, calcular nova matriz A. O objetivo é obter uma matriz de cargas fatoriais de mais fácil interpretação, onde cada fator se relaciona mais distintamente com certo grupo de variáveis.
 
-Existem diversos métodos de rotação, tanto ortogonal quanto obliqua. Entretanto, o método de rotação mais utilizado é o Varimax, o qual permite que os coeficientes de correlação entre os indicadores e os fatores fiquem o mais próximo possível de zero ou de 1 em valor absoluto, facilitando a interpretação.
+Existem diversos métodos de rotação, tanto ortogonal quanto oblíqua. Entretanto, o método de rotação mais utilizado é o Varimax, o qual permite que os coeficientes de correlação entre os indicadores e os fatores fiquem o mais próximo possível de zero ou de 1 em valor absoluto, facilitando a interpretação.
 
 O método de Rotação Varimax "forma um novo sistema de eixos ortogonais com o mesmo número de fatores e permite que o grupo de variáveis apareça com maior nitidez, facilitando a interpretação e Análise" (ZAMBRANO e LIMA, 2004). 
 
@@ -514,7 +560,7 @@ V. Interpretação e Análise: pode-se fazer estatística descritiva, diferença
 Valor numérico que quantifica o grau de semelhança entre um par de objetos. Pode ser de dois tipos: similaridade ou dissimilaridade. Para quantitativas, as distâncias são as mais usadas. São medidas de dissimilaridade.
 
 I. Distancia Euclidiana;
-II. Distancia Euclidiana Quadrçtica;
+II. Distancia Euclidiana Quadrática;
 III. Distancia Euclidiana Ponderada;
 IV. Distância de Minkowsky (city-block)
 	
