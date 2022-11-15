@@ -600,27 +600,27 @@ evec <-eigen(s)$vectors
 evec
 evec[,1:4]
 
-#Matriz de Cargas Fatoriais L modelo completo
-L <- sqrt(lambda)*t(evec)
-L <- t(L) #Extracao dos Fatores
-L[,1:4] #4 primeiros fatores
-LLT <- L%*%t(L)
-LLT
+#Matriz de Cargas Fatoriais A modelo completo
+A <- sqrt(lambda)*t(evec)
+A <- t(A) #Extracao dos Fatores
+A[,1:4] #4 primeiros fatores
+AAT <- A%*%t(A)
+AAT
 
 #Proporção da variabilidade explicada por cada componente
 round(lambda/sum(lambda),4)
 
 #Matriz de Cargas Fatoriais m =4
-Lm4 <- L[,1:4]
-LLTm4 <- Lm4%*%t(Lm4)
-LLTm4
+Am4 <- A[,1:4]
+AATm4 <- Am4%*%t(Am4)
+AATm4
 
 #Matriz PSI - Unicidade
-psi <- diag(diag(s-LLTm4))
+psi <- diag(diag(s-AATm4))
 psi
 
 #Matriz Residual
-s-(LLTm4+psi)
+s-(AATm4+psi)
 ```
 
 ```{r estat7, warning=FALSE, message=FALSE}
@@ -658,11 +658,51 @@ text(carfat, rownames(carfat), adj = 1)
 
 <br>
 
-Consiste em "modificar" as cargas fatoriais, ou seja, calcular nova matriz A. O objetivo é obter uma matriz de cargas fatoriais de mais fácil interpretação, onde cada fator se relaciona mais distintamente com certo grupo de variáveis.
+Sabe-se que vetores característicos não são únicos e, por isso, as cargas fatoriais da Análise Fatorial por Componentes Principais podem ser modificadas sem prejudicar o significado da análise. A rotação Consiste em "modificar" as cargas fatoriais, ou seja, calcular nova matriz A. O objetivo é obter uma matriz de cargas fatoriais de mais fácil interpretação, onde cada fator se relaciona mais distintamente com certo grupo de variáveis.
 
-Existem diversos métodos de rotação, tanto ortogonal quanto oblíqua. Entretanto, o método de rotação mais utilizado é o Varimax, o qual permite que os coeficientes de correlação entre os indicadores e os fatores fiquem o mais próximo possível de zero ou de 1 em valor absoluto, facilitando a interpretação.
+No entanto, nem sempre se tem uma estrutura nítida de relacionamento de variáveis e fatores. Normalmente, todas as variáveis apresentam coeficiente de correlação de certa magnitude com todos os fatores e, muitas vezes, é difícil identificar a relação de forma adequada. A rotação de fatores/eixos é um procedimento matematicamente correto e tem como finalidade facilitar a interpretação dos fatores, isto é, gerar uma nova solução para as cargas fatoriais que mostra uma relação mais nítida entre variáveis e fatores.
+
+A rotação dos fatores consiste na rotação dos eixos coordenados e o cálculo de novos valores de abscissas e ordenadas relacionados com o novo sistema de eixos. Se o ângulo do novo sistema se mantiver em 90º, a rotação é denominada **ortogonal** e se mudar, a rotação é denominada **oblíqua**. No primeiro caso, os fatores permanecem não correlacionados, mas, no segundo caso, haverá correlação o que dificulta interpretação.
+
+Vale ressaltar que a rotação ortogonal modifica as cargas fatoriais, mas não modifica as comunalidades ($h_i^2$) e, como observa Mingoti (2005), “em termos de qualidade de ajuste, esta nova solução não acrescenta nenhuma melhoria em relação ao ajuste obtido usando a matriz 2ihA, pois a matriz residual original não é alterada pela transformação ortogonal”.
+
+Existem diversos métodos de rotação, tanto ortogonal (varimax, quartimax, orthomax, equimax) quanto oblíqua (oblimim, quartimim, biquartimim, covax). Entretanto, o método de rotação mais utilizado é o Varimax, o qual permite que os coeficientes de correlação entre os indicadores e os fatores fiquem o mais próximo possível de zero ou de 1 em valor absoluto, facilitando a interpretação.
 
 O método de Rotação Varimax "forma um novo sistema de eixos ortogonais com o mesmo número de fatores e permite que o grupo de variáveis apareça com maior nitidez, facilitando a interpretação e Análise" (ZAMBRANO e LIMA, 2004). 
+
+Considere que partindo da já vista matriz de correlaçoes
+
+$$
+\mathbf{\Sigma} = AA'+\Psi
+$$
+se tenha uma matriz ortogonal T de tal forma que $TT'=I$. Então, é possível escrever 
+
+$$
+\mathbf{\Sigma} = ATT'A'+\Psi
+$$
+
+$$
+\mathbf{\Sigma} = AT(AT)'+\Psi
+$$
+
+se denominar AT por A*, tem-se
+
+$$
+\mathbf{\Sigma} = A^*A^*'+\Psi
+$$
+isto significa que dada uma solução para A, é possível encontrar uma outra solução para $A^*$, através da escolha da matriz ortogonal T, que seja de mais fácil interpretação do que a solução original. 
+
+No critério Varimax, a busca pela matriz T tem como base a tentativa de encontrar fatores com grandes variabilidades nas cargas fatoriais, isto é, encontrar para um fator fixo, um grupo de variáveis X altamente correlacionadas com o fator e um outro grupo de variáveis que tenham correlação desprezível ou moderada com o fator. 
+
+Para cada fator fixo, a solução é obtida através da maximização da variação dos quadrados das cargas fatoriais originais das colunas da matriz A. Seja $\hat a_{ij}^*$ o coeficiente da i-ésima variável no j-ésimo fator após a rotação. Seja V a quantidade definida por
+
+$$
+V= \frac{1}{p} \sum_{j=1}^m \Bigg[\sum_{i=1}^p \tilde a_{ij}^4-\frac{1}{p}(\sum_{i=1}^p \tilde a_{ij}^2)^2 \Bigg]
+$$
+
+onde $\tilde a_{ij}=(\hat a_{ij}^*/ \hat h_i)$, sendo $\hat h_i$ a raiz quadrada da comunalidade da variável $X_i$. A maximização de V corresponde a "puxar" os quadrados das cargas sobre cada fator o máximo possível. O que se espera é encontrar grupos definidos de coeficientes para cada coluna de fator.
+
+A função da rotação de fatores tem a função de procurar cargas fatoriais que mostram um padrão de relacionamento claro e de fácil interpretação entre variáveis e fatores. Deve-se observar que as comunalidades não mudam, o que é uma característica da rotação ortogonal.
 
 <br>	 
 
@@ -670,7 +710,7 @@ O método de Rotação Varimax "forma um novo sistema de eixos ortogonais com o 
 
 <br>
 
-Escores fatoriais são os valores de cada fator para cada observação. São importantes para mapeamento das observações e para serem utilizadas em outras técnicas, como cluster, regressão, etc 
+Escores fatoriais são os valores de cada fator para cada observação da amostra. São importantes para mapeamento das observações e para serem utilizadas em outras técnicas, como cluster, regressão, etc. Como se tem um modelo estatístico estes escores devem ser estimados à semelhança de um modelo de regressão onde se obtém previsões para a variável dependente. 
 
 <br>	
 
