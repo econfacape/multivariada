@@ -688,7 +688,7 @@ $$
 se denominar AT por A*, tem-se
 
 $$
-\mathbf{\Sigma} = A^*A^*'+\Psi
+\mathbf{\Sigma} = A^{*} A^{* '}+ \Psi
 $$
 isto significa que dada uma solução para A, é possível encontrar uma outra solução para $A^*$, através da escolha da matriz ortogonal T, que seja de mais fácil interpretação do que a solução original. 
 
