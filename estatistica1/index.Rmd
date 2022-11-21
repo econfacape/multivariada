@@ -175,7 +175,7 @@ As raízes características possuem um conjunto de propriedades:
 6) As raízes de $A^{-1}$ são iguais a $1/ \lambda_i$, mas os vetores característicos são os mesmos;
 7) Se A é ortogonal, $\lambda_i=1$ ou $-1$;
 8) Se A é uma matriz idempotente, $\lambda_i=1$ ou $0$;
-9) Raízes características de matrizes simétrica;
+9) Raízes características de matrizes simétrica são números reais;
 10) Os vetores característicos de matrizes simétricas são ortogonais, ou seja, não
 correlacionados.
 
