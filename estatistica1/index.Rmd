@@ -181,7 +181,7 @@ correlacionados.
 
 <br>
 
-### Obtenção Componentes Principais
+### Obtenção dos Componentes Principais
 
 <br>
 
@@ -425,7 +425,7 @@ X_3=a_{31}F_1+a_{32}F_2+a_{33}F_3+ \dots +a_{3r}F_r+\epsilon_3 \\
 X_p=a_{p1}F_1+a_{p2}F_2+a_{p3}F_3+ \dots +a_{pr}F_r+\epsilon_p \\
 \end{cases}
 
-O modelo tem como objetivo explicar o comportamento das p variáveis em função de r<p fatores comuns (desconhecidos) e de um termo de erro composto de unicidade (fatores específicos) e erro aleatório. O processo de estimação que consiste em determinar a matriz de cargas fatoriais $\mathbf{\Lambda}$.
+O modelo tem como objetivo explicar o comportamento das p variáveis em função de r<p fatores comuns (desconhecidos) e de um termo de erro composto de unicidade (fatores específicos) e erro aleatório. O processo de estimação consiste em determinar a matriz de cargas fatoriais $\mathbf{\Lambda}$.
 
 <br>
 
@@ -436,9 +436,9 @@ Os pressupostos do Modelo de Análise Fatorial podem ser resumidos em:
 
 1. $\mathbf{f} \sim (\mathbf{0},\mathbf{I})$, ou seja, os fatores possuem média zero e variância constante igual a um e não são autocorrelacionados;
 
-2. $\epsilon \sim (\mathbf{0},\mathbf{\Psi})$, em que $\mathbf{\Psi}=diag(\psi_1,\dots,\psi_p)$, ou seja, os erros tem média zero e podem ter variâncias diferentes, mas não correlacionados;
+2. $\epsilon \sim (\mathbf{0},\mathbf{\Psi})$, em que $\mathbf{\Psi}=diag(\psi_1,\dots,\psi_p)$, ou seja, os erros tem média zero e podem ter variâncias diferentes, mas não correlacionadas;
 	 
-3. $\mathbf{f}$ e $\mathbf{\epsilon}$ são independentes, ou seja, os fatores comuns são independentes dos fatores específicos e erros;
+3. $\mathbf{f}$ e $\mathbf{\epsilon}$ são independentes, ou seja, os fatores comuns são independentes dos fatores específicos e erros.
 
 A Análise Fatorial pode ser feita com a matriz de variâncias e covariâncias ou com a matriz de correlações. Como normalmente é recomendado o uso de variáveis padronizadas para contornar o problema de unidades de medidas diferentes e a influência que uma variável com variância grande pode ter na determinação das cargas fatoriais, a Análise Fatorial é, quase sempre, feita com a matriz de correlações $\mathbf{\Sigma}$ .
 
@@ -654,11 +654,11 @@ plot(carfat, pch = 20, col = "red", xlab = "Fator 1", ylab = "Fator 2")
 text(carfat, rownames(carfat), adj = 1)
 ```
 
-Em relação a Análise Fatorial por máxima verossimilhança, supondo o vetor de variáveis com distribuição normal p-variada, tem-se
+Em relação a Análise Fatorial por **Máxima Verossimilhança**, supondo o vetor de variáveis com distribuição Normal p-variada, tem-se
 
 a) as variáveis padronizadas serão Z $\sim$ N(0, $\Sigma$);
 
-b) o vetor de fatores será F $\sim$ N(0,I)
+b) o vetor de fatores será F $\sim$ N(0,I);
 
 c) o vetor de erros será $\epsilon \sim N(0, \Psi)$
 
@@ -667,7 +667,7 @@ Pelo modelo fatorial $\mathbf{x}=\mathbf{\Lambda} \mathbf{f}+ \mathbf{\epsilon}$
 $$
 L(0, \Sigma)=(2 \pi)^{(\frac{-np}{2})}|AA' + \Psi|^{\frac{-n}{2}}e^{\frac{-1}{2}\sum_{j=1}^n Z_j'(AA'+\Psi)^{-1}Z_j}
 $$
-É necessário definir o número de fatores antecipadamente. Uma mudança neste número acarreta mudança nas cargas fatoriais, diferentemente do método de componentes principais. Na análise fatorial por máxima verossimilhança há equivalência entre decompor $\Sigma$ ou a matriz de covariâncias $S$, o que não ocorre na AF via componentes principais. 
+É necessário definir o número de fatores antecipadamente. Uma mudança neste número acarreta mudança nas cargas fatoriais, diferentemente do método de componentes principais. Na Analise Fatorial por Máxima Verossimilhança há equivalência entre decompor $\Sigma$ ou a matriz de covariâncias $S$, o que não ocorre na AF via Componentes Principais. 
 
 <br>
 
@@ -726,17 +726,17 @@ fatorial2
 
 <br>
 
-Sabe-se que vetores característicos não são únicos e, por isso, as cargas fatoriais da Análise Fatorial por Componentes Principais podem ser modificadas sem prejudicar o significado da análise. A rotação Consiste em "modificar" as cargas fatoriais, ou seja, calcular nova matriz A. O objetivo é obter uma matriz de cargas fatoriais de mais fácil interpretação, onde cada fator se relaciona mais distintamente com certo grupo de variáveis.
+Sabe-se que vetores característicos não são únicos e, por isso, as cargas fatoriais da Análise Fatorial por Componentes Principais podem ser modificadas sem prejudicar o significado da análise. A rotação consiste em "modificar" as cargas fatoriais, ou seja, calcular nova matriz A. O objetivo é obter uma matriz de cargas fatoriais de mais fácil interpretação, onde cada fator se relaciona mais distintamente com certo grupo de variáveis.
 
 No entanto, nem sempre se tem uma estrutura nítida de relacionamento de variáveis e fatores. Normalmente, todas as variáveis apresentam coeficiente de correlação de certa magnitude com todos os fatores e, muitas vezes, é difícil identificar a relação de forma adequada. A rotação de fatores/eixos é um procedimento matematicamente correto e tem como finalidade facilitar a interpretação dos fatores, isto é, gerar uma nova solução para as cargas fatoriais que mostra uma relação mais nítida entre variáveis e fatores.
 
-A rotação dos fatores consiste na rotação dos eixos coordenados e o cálculo de novos valores de abscissas e ordenadas relacionados com o novo sistema de eixos. Se o ângulo do novo sistema se mantiver em 90º, a rotação é denominada **ortogonal** e se mudar, a rotação é denominada **oblíqua**. No primeiro caso, os fatores permanecem não correlacionados, mas, no segundo caso, haverá correlação o que dificulta interpretação.
+A rotação dos fatores consiste na rotação dos eixos coordenados e o cálculo de novos valores de abscissas e ordenadas relacionados com o novo sistema de eixos. Se o ângulo do novo sistema se mantiver em 90º, a rotação é denominada **ortogonal** e, se mudar o ângulo, a rotação é denominada **oblíqua**. No primeiro caso os fatores permanecem não correlacionados, mas, no segundo caso, haverá correlação, o que dificulta a interpretação.
 
-Vale ressaltar que a rotação ortogonal modifica as cargas fatoriais, mas não modifica as comunalidades ($h_i^2$) e, como observa Mingoti (2005), “em termos de qualidade de ajuste, esta nova solução não acrescenta nenhuma melhoria em relação ao ajuste obtido usando a matriz 2ihA, pois a matriz residual original não é alterada pela transformação ortogonal”.
+Vale ressaltar que a rotação ortogonal modifica as cargas fatoriais, mas não modifica as comunalidades ($h_i^2$) e, como observa Mingoti (2005, p. 121), “em termos de qualidade de ajuste, esta nova solução não acrescenta nenhuma melhoria em relação ao ajuste obtido usando a matriz $\hat A_{p_xm}$, pois a matriz residual original não é alterada pela transformação ortogonal”.
 
-Existem diversos métodos de rotação, tanto ortogonal (varimax, quartimax, orthomax, equimax) quanto oblíqua (oblimim, quartimim, biquartimim, covax). Entretanto, o método de rotação mais utilizado é o Varimax, o qual permite que os coeficientes de correlação entre os indicadores e os fatores fiquem o mais próximo possível de zero ou de 1 em valor absoluto, facilitando a interpretação.
+Existem diversos métodos de rotação, tanto ortogonal (Varimax, Quartimax, Orthomax, Equimax) quanto oblíqua (Oblimim, Quartimim, Biquartimim, Covax). Entretanto, o método de rotação mais utilizado é o Varimax, o qual permite que os coeficientes de correlação entre os indicadores e os fatores fiquem o mais próximo possível de zero ou de 1 em valor absoluto, facilitando a interpretação.
 
-O método de Rotação Varimax "forma um novo sistema de eixos ortogonais com o mesmo número de fatores e permite que o grupo de variáveis apareça com maior nitidez, facilitando a interpretação e Análise" (ZAMBRANO e LIMA, 2004). 
+O método de Rotação Varimax "forma um novo sistema de eixos ortogonais com o mesmo número de fatores e permite que o grupo de variáveis apareça com maior nitidez, facilitando a interpretação e análise" (ZAMBRANO e LIMA, 2004). 
 
 Considere que partindo da já vista matriz de correlaçoes
 
@@ -762,7 +762,7 @@ isto significa que dada uma solução para A, é possível encontrar uma outra s
 
 No critério Varimax, a busca pela matriz T tem como base a tentativa de encontrar fatores com grandes variabilidades nas cargas fatoriais, isto é, encontrar para um fator fixo, um grupo de variáveis X altamente correlacionadas com o fator e um outro grupo de variáveis que tenham correlação desprezível ou moderada com o fator. 
 
-Para cada fator fixo, a solução é obtida através da maximização da variação dos quadrados das cargas fatoriais originais das colunas da matriz A. Seja $\hat a_{ij}^*$ o coeficiente da i-ésima variável no j-ésimo fator após a rotação. Seja V a quantidade definida por
+Para cada fator fixo, a solução é obtida através da maximização da variação dos quadrados das cargas fatoriais originais das colunas da matriz A. Seja $\hat a_{ij}^*$ o coeficiente da i-ésima variável no j-ésimo fator após a rotação, e seja V a quantidade definida por
 
 $$
 V= \frac{1}{p} \sum_{j=1}^m \Bigg[\sum_{i=1}^p \tilde a_{ij}^4-\frac{1}{p}(\sum_{i=1}^p \tilde a_{ij}^2)^2 \Bigg]
@@ -837,7 +837,7 @@ theme_bw()
 
 1. **Matriz de Correlações**: examinar a matriz de correlações simples, procurando visualizar algum padrão de relacionamento entre as variáveis; devem existir grupos de variáveis correlacionadas;
 
-2. **Matriz Anti-Imagem**: Matriz de correlações Parciais com sinais invertidos. Matrizes anti-imagem podem ser usadas para avaliar se variáveis individuais devem ser incluídas na análise fatorial. Isso significa trazer a porção de variância de uma variável que pode ser explicada com as variáveis correlacionadas (imagem) em associação com a porção de variância inexplicável (anti-imagem). As variáveis são adequadas para incluir na análise fatorial se os valores da matriz anti-imagem forem baixos.
+2. **Matriz Anti-Imagem**: Matriz de correlações Parciais com sinais invertidos. Matrizes anti-imagem podem ser usadas para avaliar se variáveis individuais devem ser incluídas na análise fatorial. Isso significa trazer a porção de variância de uma variável que pode ser explicada com as variáveis correlacionadas (imagem) em associação com a porção de variância inexplicável (anti-imagem). As variáveis são adequadas para incluir na análise fatorial se os valores da matriz anti-imagem forem baixos;
 
 3. **Teste de esfericidade de Bartlett**: testa se a matriz de correlações é estatisticamente igual a uma matriz identidade. Se for, não é boa para Análise Fatorial. O que se busca, então, é rejeitar a hipótese nula de que a matriz de correlação verdadeira é uma matriz identidade;
 	
@@ -848,7 +848,7 @@ $$
 $$
 em que $r_{ij}$ é o coeficiente de correlação simples e $a_{ij}$ é a correlação parcial.
 
-Quanto mais $\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2$ for próximo de 0, mais o valor de $\mathbf{KMO}$ se aproximará de 1 e mais adequados os dados serão para a Análise fatorial. Valores abaixo de 0,6 são considerados ruins para a Análise fatorial.
+Quanto mais $\sum_{i=1}^{p}\sum_{j=1}^{p}a_{ij}^2$ for próximo de 0, mais o valor de $\mathbf{KMO}$ se aproximará de 1 e mais adequados os dados serão para a Análise fatorial. Valores abaixo de 0,6 são considerados ruins para a Análise Fatorial.
 
 ```{r estat12, warning=FALSE, message=FALSE}
 
