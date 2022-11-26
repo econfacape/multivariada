@@ -1,0 +1,253 @@
+---
+title: "Análise Estatística Multivariada"
+author: "João Ricardo F. de Lima"
+date: "`r format(Sys.time(), '%d de %B de %Y.')`"
+output: 
+    html_document:
+        theme: flatly
+        number_sections: yes
+        highlight: textmate
+#        includes: 
+#          in_header: "header.html"
+        toc: yes
+        toc_float:
+          collapsed: yes
+          smooth_scroll: yes 
+---
+
+<br>
+
+# Análise de Correlação Canônica
+
+<br>
+
+O termo correlação se refere ao relacionamento entre variáveis e é medida pelo coeficiente de correlação. A **correlação simples** mede o grau de associação linear entre duas variáveis ($r_{xy}$). A **correlação parcial** mede o grau de associação linear entre duas variáveis mantendo-se outras variáveis constantes. A ordem da correlação parcial vai depender do número de variáveis que ficam constantes. Com uma variável constante ($r_{xy.z}$) Z, a correlação parcial de x e y é dita de ordem um. A **correlação múltipla** mede o grau de associação entre uma variável e um conjunto de variáveis ($r_{x_1.x_2 x_3 \dots x_p}$). A **correlação canônica** mede o grau de associação entre dois grupos de variáveis, com um grupo denotado normalmente por Y e o outro por X. Estatiscamente, a correlação canônica procura testar se os dois conjuntos de variáveis são independentes. 
+
+É uma técnica de Análise Multivariada usada para quantificar o grau de correlação (dependência) entre dois grupos de variáveis. Exemplos:
+
+a) Correlação entre Variáveis Econômicas e Variáveis Sociais
+b) Correlação entre Variáveis Tecnológicas e Variáveis Econômicas
+c) Correlação entre Variáveis Econômicas e Variáveis Ambientais
+d) Correlação entre Variáveis de Habilidade Matemática e Variáveis de Habilidade de Escrita
+e) Correlação entre Variáveis de Características do Trabalho e Variáveis de Satisfação no Trabalho
+
+Um exemplo disponível no site da UCLA (https://stats.oarc.ucla.edu/r/dae/canonical-correlation-analysis/) mostra que uma pesquisadora coletou dados sobre três variáveis psicológicas, quatro variáveis acadêmicas (resultados de testes padronizados) e gênero para 600 calouros universitários. Ela está interessada em como o conjunto de variáveis psicológicas se relaciona com as variáveis acadêmicas e de gênero. Em particular, a pesquisadora está interessada em quantas dimensões (variáveis canônicas) são necessárias para entender a associação entre os dois conjuntos de variáveis.
+
+O arquivo de dados (mmreg.csv), possui 600 observações em oito variáveis. As variáveis psicológicas são locus_of_control, auto_conceito e motivação. As variáveis acadêmicas são testes padronizados em leitura (read), escrita (write), matemática (math) e ciências (science). Além disso, a variável female é uma variável binária (zero-um) com 1 para a estudante do sexo feminino.
+
+<br>
+
+## Entrada Dados da Correlação Canônica no R
+
+<br>
+
+```  {r estat1, warning=FALSE, message=FALSE}
+
+#Pacotes utilizados
+library(tidyverse)
+library(skimr)
+library(ggplot2)
+library(GGally)
+library(CCA)
+library(psych)
+
+dados <- read.csv("https://stats.idre.ucla.edu/stat/data/mmreg.csv")
+colnames(dados) <- c("Control", "Concept", "Motivation", "Read", "Write", "Math", 
+    "Science", "Gender")
+
+attach(dados)
+
+#Visualizaçao dos dados
+glimpse(dados)
+
+head(dados)
+
+tail(dados)
+
+#Estatistica descritiva dos dados
+summary(dados)
+
+skim(dados)
+```
+
+<br>
+
+Abaixo está uma lista de alguns métodos de análise que podem ser usadas com estes dados: 
+
+a) Análise de correlação canônica;
+
+b) Regressões simples separadas – analisar esses dados usando análises de regressão simples separadas para cada variável em um conjunto. As regressões não produzirão resultados multivariados e não relatam informações relativas à dimensionalidade;
+
+c) A regressão múltipla multivariada.
+
+
+<br>
+
+Os dados para análise de correlações canônicas são formados por dois conjuntos de variáveis, formando dois vetores de variáveis X e Y, que podem ser organizados como demonstrado abaixo.  
+
+
+| OBS    |   |    |      X  |    |    |    |    Y    |    |
+|:------:|:---:|:---:|:---:|:------:|:---:|:---:|:---:|:---:|
+|        | X1 | X2 | \.\.\. | XP | Y1 | Y2 | \.\.\. | YP |
+| 1      |    |    |        |    |    |    |        |    |
+| 2      |    |    |        |    |    |    |        |    |
+| 3      |    |    |        |    |    |    |        |    |
+| 4      |    |    |        |    |    |    |        |    |
+| \.\.\. |    |    |        |    |    |    |        |    |
+| N      |
+
+
+com estes dados pode-se ter uma matriz de correlaçoes dada por 
+
+$$
+\mathbf{R}=\left[\begin{array}{ccc}
+                R_{11} & \vdots & R_{12}  \\
+                \dots & \vdots & \dots \\
+                R_{21} & \vdots & R_{22}  \\
+                \end{array} \right]
+$$
+
+que pode ser particionada em 4 partes onde $R_{11}$ é uma matriz de correlações do primeiro grupo; $R_{22}$ é uma matriz de correlações do segundo grupo; e $R_{12}$ e $R_{21}$ são correlações entre as variáveis de um grupo com as do outro grupo, sendo que uma é a transposta da outra. 
+
+<br>
+
+## Demonstração da Correlação Canônica no R
+
+<br>
+
+```  {r estat2, warning=FALSE, message=FALSE}
+
+psych <- dados[, 1:3]
+acad <- dados[, 4:8]
+
+ggpairs(psych)
+ggpairs(acad)
+
+# Correlações entre os dois conjuntos de variáveis
+matcor(psych, acad)
+
+```
+
+<br>
+
+A matriz $R_{12}$ mostra as correlações entre as variáveis dos dois grupos. Com p variáveis no vetor X e q variáveis no vetor Y tem-se pq correlações. A análise do relacionamento entre os dois grupos de variáveis por meio das pq correlações é inviável. O objetivo da **Análise de Correlação Canônica** é resumir o padrão de associação entre os X’s e os Y’s em termos de poucas correlações.
+
+A idéia básica da técnica é:
+
+a) Calcula-se, inicialmente, 2 combinações lineares, uma de cada conjunto de variáveis, de forma que a correlação entre elas seja máxima. As combinações lineares são denominadas *variáveis canônicas* e os pares são denominados *pares canônicos*. O primeiro par deve apresentar a maior correlação entre as variáveis canônicas;
+
+b) Em seguida, calcula-se 2 outras variáveis canônicas, ou seja, outro par canônico, com a condição de serem ortogonais às primeiras e terem o máximo coeficiente de correlação. O segundo par deve ter a segunda maior correlação entre as variáveis canônicas.
+
+c) Assim, sucessivamente.
+
+Em geral, o número de dimensões canônicas (pares canônicos) é igual ao número de variáveis no conjunto menor $min(p,q)$. . No entanto, o número de dimensões significativas pode ser ainda menor. O *coeficiente de correlação canônica* é o coeficiente de correlação de Pearson, em valor absoluto, entre as variáveis canônicas de cada par canônico. Existem, então, $k=min(p,q)$ pares canônicos e k coeficientes de correlação canônica sendo interpretados somente aqueles estatísticamente significativos.
+
+Sejam $U_1$ e $V_1$ o primeiro par canônico, dado por
+
+\begin{cases}
+U_1=a_{11}X_1+a_{21}X_2+a_{31}X_3+ \dots +a_{p1}X_p \\
+V_1=b_{11}Y_1+b_{21}Y_2+b_{31}Y_3+ \dots +b_{q1}Y_q \\
+\end{cases}
+
+o problema passa a ser encontrar os vetores $a_1$ e $b_1$ que maximizem a correlação entre $U_1$ e $V_1$.
+
+Sejam $U_2$ e $V_2$ o segundo par canônico, dado por
+
+\begin{cases}
+U_2=a_{12}X_1+a_{22}X_2+a_{32}X_3+ \dots +a_{p2}X_p \\
+V_2=b_{12}Y_1+b_{22}Y_2+b_{32}Y_3+ \dots +b_{q2}Y_q \\
+\end{cases}
+
+o problema passa a ser agora encontrar os vetores $a_2$ e $b_2$ que maximizem a correlação entre $U_2$ e $V_2$ e mantenha a condição de ortogonalidade entre $U_1$ e $U_2$ e entre $V_1$ e $V_2$.
+
+<br>
+
+## Demonstração da Correlação Canônica no R
+
+<br>
+
+Considerando as variáveis padronizadas, que é o mesmo que trabalhar com a matriz de correlações, tem-se que combinações lineares das variáveis X são dadas por $U=a'X$, com $var(U)=var(a'X)=a'R_{11}a$ e combinações lineares de Y são dadas por $V=b'Y$, com $var(V)=var(b'Y)=b'R_{22}b$ e $cov(U,Y)=cov(a'X,b'Y)=a'R_{12}b$.
+
+Sendo 
+
+$$
+r_{UV}=\frac{COV(U,V)}{\sqrt{var(U)}\sqrt{var(V)}}
+$$
+
+pode-se definir $r_{UV}^2$ como 
+
+$$
+r_{UV}^2=\frac{[COV(U,V)]^2}{var(U) var(V)}=\frac{(a'R_{12}b)^2}{(a'R_{11}a)(b'R_{22}b)}
+$$
+
+Assim, o problema pode ser definido como 
+
+$$
+maximizar \quad (a'R_{12}b)
+$$
+
+sujeito a
+
+$$
+a'R_{11}a=1 
+$$
+$$
+b'R_{22}b=1 
+$$
+$$
+a'R_{11}a^*=0 \quad a \neq a^* 
+$$
+$$
+b'R_{22}b^*=0 \quad b \neq b^*  
+$$
+
+Resumidamente, o problema de maximização condicionado encontra os valores de $a_k$ e $b_k$ como soluções do seguinte sistema de equações
+
+\begin{cases}
+(R_{12}R_{22}^{-1}R_{21}-\lambda_k R_{11})a_k=0 \\
+(R_{21}R_{11}^{-1}R_{12}-\lambda_k R_{22})b_k=0 \\
+\end{cases}
+
+em que $\lambda_k$ são raízes características e $a_k$ e $b_k$ são vetores característicos. Assim, os $\lambda_k$ satisfazem as seguintes equações características
+
+\begin{cases}
+|R_{12}R_{22}^{-1}R_{21}-\lambda_k R_{11}|=0 \\
+|R_{21}R_{11}^{-1}R_{12}-\lambda_k R_{22}|=0 \\
+\end{cases}
+
+ou
+
+\begin{cases}
+|R_{11}^{-1}R_{12}R_{22}^{-1}R_{21}-\lambda_k I|=0 \\
+|R_{22}^{-1}R_{21}R_{11}^{-1}R_{12}-\lambda_k I|=0 \\
+\end{cases}
+
+em que, $\lambda_k$ é a k-ésima maior raiz característica da matriz $R_{11}^{-1}R_{12}R_{22}^{-1}R_{21}$ ou da matriz $$R_{22}^{-1}R_{21}R_{11}^{-1}R_{12}$$.
+
+O vetor "a" é o vetor característico da matriz $R_{11}^{-1}R_{12}R_{22}^{-1}R_{21}$ 
+
+Dado "a", o vetor "b" pode ser obtido pela relação $b=\frac{1}{\sqrt{\lambda}}R_{22}^{-1}R_{21}a$.
+
+O vetor "b" pode ser obtido pelas raízes características da matriz $R_{22}^{-1}R_{21}R_{11}^{-1}R_{12}$.
+
+De forma semelhante, dado "b", o vetor "a" pode ser calculado por $a=\frac{1}{\sqrt{\lambda}}R_{11}^{-1}R_{12}b$.
+
+As soluções para as raízes de $R_{11}^{-1}R_{12}R_{22}^{-1}R_{21}$ ou de $$R_{22}^{-1}R_{21}R_{11}^{-1}R_{12}$$ são idênticas.
+
+
+Tem-se, assim, a solução para os coeficientes das variáveis canônicas que são os elementos dos vetores “a” e “b”. Observe que:
+
+a) As raízes podem ser calculadas com base em equações características diferentes
+
+\begin{cases}
+|R_{11}^{-1}R_{12}R_{22}^{-1}R_{21}-\lambda_k I|=0 \\
+|R_{22}^{-1}R_{21}R_{11}^{-1}R_{12}-\lambda_k I|=0 \\
+\end{cases}
+
+b) Para cada raiz existe um par de vetores cujos elementos são os coeficientes das variáveis canônicas. Estes coeficientes são chamados pesos canônicos e podem ser calculados na forma bruta ou padronizada.
+
+c) O coeficiente de correlação canônica é o coeficiente de correlação, em valor absoluto, entre $U_k$ e $V_k$.
+
+
+Calculados os vetores de coeficientes a e b e os coeficientes de correlação canônica os próximos passos consistem em testes de hipóteses e interpretações. A variável canônica é, de certa forma, uma variável latente. À semelhança da interpretação dos fatores na Análise Fatorial, as variáveis canônicas podem ser identificadas em termos das variáveis com que elas mais se relacionam. Isto pode ser feito por meio dos coeficientes canônicos ou pesos canônicos ou, preferencialmente, através das correlações entre a variável canônica e as variáveis originais. Estas correlações são denominadas cargas canônicas (canonical loadings) ou correlações estruturais. Por exemplo, se $U_1$ e $X_1$ são positiva e altamente correlacionadas, $U_1$ pode ser considerada um reflexo de $X_1$. Da mesma forma, se $V_1$ for negativa e altamente correlacionada com $Y_1$ e positiva e altamente correlacionada com $Y_3$, então $V_1$ reflete $Y_1$ em sentido contrário e $Y_3$ no mesmo sentido.
+
