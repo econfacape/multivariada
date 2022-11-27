@@ -49,6 +49,7 @@ library(skimr)
 library(ggplot2)
 library(GGally)
 library(CCA)
+library(CCP)
 library(psych)
 
 dados <- read.csv("https://stats.idre.ucla.edu/stat/data/mmreg.csv")
@@ -111,7 +112,7 @@ que pode ser particionada em 4 partes onde $R_{11}$ é uma matriz de correlaçõ
 
 <br>
 
-## Demonstração da Correlação Canônica no R
+## Verificação das Correlações no R
 
 <br>
 
@@ -140,7 +141,7 @@ b) Em seguida, calcula-se 2 outras variáveis canônicas, ou seja, outro par can
 
 c) Assim, sucessivamente.
 
-Em geral, o número de dimensões canônicas (pares canônicos) é igual ao número de variáveis no conjunto menor $min(p,q)$. . No entanto, o número de dimensões significativas pode ser ainda menor. O *coeficiente de correlação canônica* é o coeficiente de correlação de Pearson, em valor absoluto, entre as variáveis canônicas de cada par canônico. Existem, então, $k=min(p,q)$ pares canônicos e k coeficientes de correlação canônica sendo interpretados somente aqueles estatísticamente significativos.
+Em geral, o número de dimensões canônicas (pares canônicos) é igual ao número de variáveis no conjunto menor $min(p,q)$. No entanto, o número de dimensões significativas pode ser ainda menor. O *coeficiente de correlação canônica* é o coeficiente de correlação de Pearson, em valor absoluto, entre as variáveis canônicas de cada par canônico. Existem, então, $k=min(p,q)$ pares canônicos e k coeficientes de correlação canônica sendo interpretados somente aqueles estatísticamente significativos.
 
 Sejam $U_1$ e $V_1$ o primeiro par canônico, dado por
 
@@ -162,7 +163,7 @@ o problema passa a ser agora encontrar os vetores $a_2$ e $b_2$ que maximizem a 
 
 <br>
 
-## Demonstração da Correlação Canônica no R
+## Solução Geral da Correlação Canônica
 
 <br>
 
@@ -246,8 +247,193 @@ a) As raízes podem ser calculadas com base em equações características difer
 
 b) Para cada raiz existe um par de vetores cujos elementos são os coeficientes das variáveis canônicas. Estes coeficientes são chamados pesos canônicos e podem ser calculados na forma bruta ou padronizada.
 
-c) O coeficiente de correlação canônica é o coeficiente de correlação, em valor absoluto, entre $U_k$ e $V_k$.
+c) O coeficiente de correlação canônica é o coeficiente de correlação, em valor absoluto, entre $U_k$ e $V_k$. Ele é igual a raiz quadrada da raiz característica, ou seja, $r_1=\sqrt{\lambda_1}$, $r_2=\sqrt{\lambda_2}$, etc. 
+
+<br>
+
+## Análise da Correlação Canônica no R
+
+<br>
+
+```  {r estat3, warning=FALSE, message=FALSE}
+
+# Calcular e mostrar as correlaçoes canônicas
+cc1 <- cc(psych, acad)
+cc1$cor #mostra as correlaçoes
+cc1[3:4] #mostra os coeficientes canônicos brutos
+```
+
+A dimensão 1 teve uma correlação canônica de 0,46 entre os conjuntos de variáveis, enquanto para a dimensão 2 a correlação canônica foi bem menor em 0,17. A correlação canônica da terceira dimensão foi 0,10.
+
+Os coeficientes canônicos brutos são interpretados da mesma forma que os coeficientes da análise de regressão, ou seja, para a variável read, um aumento de uma unidade leva a uma diminuição de 0,0446 na primeira variável canônica do segundo conjunto de dados, tudo o mais constante. Outro exemplo: ser mulher leva a uma diminuição de 0,6321 na dimensão 1 para o conjunto de dados "acadêmico" com tudo mais constante.
+
+```  {r estat4, warning=FALSE, message=FALSE}
+
+# Calcular as cargas canônicas
+cc2 <- comput(psych, acad, cc1)
+
+# Mostrar as cargas canônicas
+cc2[3:6]
+```
+
+As correlações acima são entre variáveis observadas e variáveis canônicas que são conhecidas como cargas canônicas. Essas variáveis canônicas são na verdade um tipo de variável latente, ou seja, não observadas. À semelhança da interpretação dos fatores na Análise Fatorial, as variáveis canônicas podem ser identificadas em termos das variáveis com que elas mais se relacionam. Isto pode ser feito por meio dos coeficientes canônicos ou pesos canônicos ou, preferencialmente, através das correlações entre a variável canônica e as variáveis originais. Estas correlações são denominadas cargas canônicas (canonical loadings) ou correlações estruturais. Por exemplo, se $U_1$ e $X_1$ são positiva e altamente correlacionadas, $U_1$ pode ser considerada um reflexo de $X_1$. Da mesma forma, se $V_1$ for negativa e altamente correlacionada com $Y_1$ e positiva e altamente correlacionada com $Y_3$, então $V_1$ reflete $Y_1$ em sentido contrário e $Y_3$ no mesmo sentido.
+
+São calculados coeficientes de correlação entre as variáveis canônicas e as variáveis originais padronizadas de forma que se tenha os coeficientes de correlação entre as variáveis canônicas U e as variáveis do grupo X; entre as variáveis canônicas U e as variáveis do grupo Y; entre as variáveis canônicas V e as variáveis do grupo Y e entre as variáveis canônicas V e as variáveis do grupo X. 
+
+Quando as variáveis do modelo possuem desvios padrão muito diferentes, os coeficientes padronizados permitem comparações mais fáceis entre as variáveis, calculados como demonstrado abaixo.
+
+```  {r estat5, warning=FALSE, message=FALSE}
+
+# coeficientes canonicos padronizados para  psych (desvio padrao da diagonal da matriz de var-cov de psych)
+s1 <- diag(sqrt(diag(cov(psych))))
+s1 %*% cc1$xcoef
+
+# coeficientes canonicos padronizados para  acad (desvio padrao da diagonal da matriz de var-cov de acad)
+s2 <- diag(sqrt(diag(cov(acad))))
+s2 %*% cc1$ycoef
+```
+
+Os coeficientes canônicos padronizados são interpretados de maneira semelhante à interpretação dos coeficientes de analise de regressão com variáveis padronizadas. Por exemplo, considere a variável *read*, um aumento de um desvio padrão em *read* leva a uma diminuição de 0,45 desvio padrão na pontuação na primeira variável canônica para o segundo conjunto de dados, tudo mais constante.
+
+Para as variáveis psicológicas, a primeira dimensão canônica é mais fortemente influenciada pelo locus de controle (Control) (-0,84) e, para a segunda dimensão, autoconceito (Concept) (-0,84) e motivação (Motivation) (0,69). Para as variáveis acadêmicas mais gênero, a primeira dimensão foi composta por leitura  (reading) (-0,45), escrita (writing) (-0,35) e gênero (gender) (-0,32). Para a segunda dimensão, escrita (writing) (0,41), ciência (science) (-0,83) e gênero (gender) (0,54) foram as variáveis dominantes.
+
+Calculados os vetores de coeficientes a e b e os coeficientes de correlação canônica os próximos passos consistem em realizar e interpretar os testes de hipóteses sobre o número de dimensões canônicas. As fórmulas para cálculo podem ser encontradas nas referencias do pacote CCP (https://cran.r-project.org/web/packages/CCP/CCP.pdf)
+
+```  {r estat6, warning=FALSE, message=FALSE}
+
+# testes de dimensões canonicas
+rho <- cc1$cor
+
+## Define o numero de observações, numero de variaveis do primeiro grupo e de variáveis do segundo conjunto de variáveis.
+
+n <- dim(psych)[1]
+p <- length(psych)
+q <- length(acad)
+
+## Calcula os p-values de diferentes testes estatísticos:
+p.asym(rho, n, p, q, tstat = "Wilks")
+p.asym(rho, n, p, q, tstat = "Hotelling")
+p.asym(rho, n, p, q, tstat = "Pillai")
+```
+
+Conforme mostrado na tabela acima, o primeiro teste das dimensões canônicas testa se todas as três dimensões são significativas (elas são, F = 11,72). O próximo teste verifica se as dimensões 2 e 3 combinadas são significativas (elas são, F = 2,94). Por fim, o último teste analisa se a dimensão 3, por si só, é significativa (não é). Portanto, as dimensões 1 e 2 devem ser significativas, enquanto a dimensão três não é.
+
+Um outro exemplo é de dados de uma amostra de 50 funcionários de uma firma que procura aperfeiçoar testes que podem revelar o potencial para vendas. Foram avaliadas 3 medidas de performance: $X_1$= aumento de vendas; $X_2$= rendimento das vendas, e $X_3$= vendas para novos clientes. Essas medidas foram transformadas para uma escala em que 100 indica performance média. Cada indivíduo foi submetido a 4 testes com o objetivo de medir criatividade, raciocínio mecânico, raciocínio abstrato e habilidade matemática. As notas destes testes formam as variáveis: $Y_1$= nota no teste de criatividade; $Y_2$= nota no teste de raciocínio mecânico; $Y_3$= nota no teste de raciocínio abstrato, e $Y_4$= nota no teste de habilidade matemática (Johnson e Wichern, 2007, p. 536). Este exemplo é semelhante ao de Mingoti (2005, p. 146).
+
+```  {r estat7, warning=FALSE, message=FALSE}
+# Pacotes
+library(tidyverse)
+
+# Direcionado o R para o Diretorio a ser trabalhado
+setwd('/Users/jricardofl/Dropbox/tempecon/multivariada')
+
+# Entrada dos dados
+dados <- read.csv2("vendedor.csv", header=TRUE, sep=";", dec=".")
+dados <- dados[,-1] #retira a primeira coluna
+
+#attach(dados)
+
+#Visualizaçao dos dados
+glimpse(dados)
+head(dados)
+tail(dados)
+
+#Estatistica descritiva dos dados
+summary(dados)
+
+skim(dados)
+
+#Correlações entre os dados
+perform <- dados %>% 
+  dplyr::select(X1, X2, X3) %>%
+  scale() %>% as_tibble
+
+testes <- dados %>% 
+  dplyr::select(Y1, Y2, Y3, Y4) %>%
+  scale() %>% as_tibble
+
+ggpairs(perform)
+ggpairs(testes)
+matcor(perform, testes)
+```
+
+<br>
+
+# Análise de Agrupamentos (Cluster)
+
+<br>
+
+Segundo Mingoti (2005), "a Análise de Agrupamentos, também conhecida como Análise de Conglomerados, Classificação ou Cluster, tem como objetivo dividir os elementos da amostra, ou população, em grupos de forma que os elementos pertencentes a um mesmo grupo sejam similares entre si com respeito às variáveis (características) que neles foram medidas, e os elementos em grupos diferentes sejam heterogêneos em relação a estas mesmas características".
+
+<br>
+
+## Etapas da Análise de Cluster
+
+<br>
+
+I) Escolher um critério de parecença (similaridade ou dissimilaridade);
+
+II) Formação dos grupos (escolher o algoritmo de agrupamento);
+
+III) Definição de número de grupos: pode ser a posteriori, como resultado da Análise ou a priori, dado o conhecimento ou conveniência da Análise;
+
+IV) Validação do agrupamento: critério do pesquisador;
+
+V) Interpretação e Análise: pode-se fazer estatística descritiva, diferença de médias, etc.
+
+<br>
+
+## Medidas de Parecença
+
+<br>
+
+Valor numérico que quantifica o grau de semelhança entre um par de objetos. Pode ser de dois tipos: similaridade ou dissimilaridade. Para quantitativas, as distâncias são as mais usadas. São medidas de dissimilaridade.
+
+I) Distancia Euclidiana;
+
+II) Distancia Euclidiana Quadrática;
+
+III) Distancia Euclidiana Ponderada;
+
+IV) Distância de Minkowsky (city-block)
+
+<br>
+
+## Técnicas para construção de Conglomerados (Clusters)
+
+<br>
+
+Para Mingoti (2005), "as técnicas de conglomerados ou clusters são frequentemente classificadas em dois tipos: técnicas hierárquicas e não hierárquicas, sendo que as hierçrquicas são classificadas em aglomerativas e divisivas".
+
+Os **Métodos hierárquicos aglomerativos** partem do princípio de que no início do processo de agrupamento têm-se n conglomerados (cada elemento é um conglomerado). Em cada passo do algoritmo, os elementos vão sendo agrupados, formando novos conglomerados até o ponto em que todos os elementos estão num único grupo.
+
+Em termos de variabilidade, no estçgio inicial é a menor possível e no final, a máxima possível, pois todos os elementos estão agrupados em apenas 1 cluster. Se dois elementos aparecem juntos num mesmo grupo em algum estçgio do processo de agrupamento, permanecerão juntos até o final, ou seja, não podem mais ser separados.
+
+Devido a esta propriedade, denominada hierarquia, se pode construiu o **Dendograma**. Dendograma é um grçfico em forma de çrvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade.
+
+<br>
+
+## Métodos de agrupamento
+
+<br>
+
+I) Método de ligação simples;
+
+II) Método de ligação completa ou do vizinho mais distante;
+
+III) Método da média das distâncias (average linkage);
+
+IV) Método dos centróides;
+
+V) Método de Ward.
+
+Segundo Mingoti (2005), "os métodos de ligação simples, completa e da média podem ser utilizados tanto para variáveis quantitativas, quanto qualitativas, ao contrário dos métodos do centróide e de Ward que são apropriados apenas para variáveis quantitativas, já que têm como base a comparação de vetores de médias".
 
 
-Calculados os vetores de coeficientes a e b e os coeficientes de correlação canônica os próximos passos consistem em testes de hipóteses e interpretações. A variável canônica é, de certa forma, uma variável latente. À semelhança da interpretação dos fatores na Análise Fatorial, as variáveis canônicas podem ser identificadas em termos das variáveis com que elas mais se relacionam. Isto pode ser feito por meio dos coeficientes canônicos ou pesos canônicos ou, preferencialmente, através das correlações entre a variável canônica e as variáveis originais. Estas correlações são denominadas cargas canônicas (canonical loadings) ou correlações estruturais. Por exemplo, se $U_1$ e $X_1$ são positiva e altamente correlacionadas, $U_1$ pode ser considerada um reflexo de $X_1$. Da mesma forma, se $V_1$ for negativa e altamente correlacionada com $Y_1$ e positiva e altamente correlacionada com $Y_3$, então $V_1$ reflete $Y_1$ em sentido contrário e $Y_3$ no mesmo sentido.
+## Métodos Não-Hierárquicos
 
+São métodos de partição de "n" objetos em "k" grupos. Os "k" grupos são pré-determinados. A cada passo verifica-se se os objetos estão alocados da "melhor" maneira. Função objetivo: procura minimizar a variância dentro do grupo e maximizar a variância entre os grupos. 
+
+Não fornece dendograma. Isto porque se em algum passo do algoritmo dois elementos tiverem sido colocados num mesmo cluster, não necessariamente "estarão juntos" na partição final. Bom quando se tem um grande número de observações. O problema principal aqui não é o número de grupos e sim a melhor forma de alocar os elementos em k grupos. O método mais usado é o das k-médias (k-means).
+
+<br>
