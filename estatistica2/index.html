@@ -2575,10 +2575,10 @@ Parecença</h2>
 <p>Valor numérico que quantifica o grau de semelhança entre um par de
 objetos. Pode ser de dois tipos: similaridade ou dissimilaridade. Para
 variáveis quantitativas, quando se buscas agrupar observações as
-distâncias são as mais usadas. São medidas de dissimilaridade entre
-objetos. O coeficiente de distância assume valor máximo para objetos
-totalmente diferentes e valor zero para dois objetos idênticos
-considerando todas as variáveis.</p>
+distâncias são as mais usadas. São medidas de
+<strong>dissimilaridade</strong> entre objetos. O coeficiente de
+distância assume valor máximo para objetos totalmente diferentes e valor
+zero para dois objetos idênticos considerando todas as variáveis.</p>
 <p>Em algumas aplicações deseja-se agrupar variáveis ao invés de
 observações. Neste caso, o coeficiente de correlação de Pearson é mais
 comumente utilizado. No caso de variáveis binárias, os dados são
@@ -2594,22 +2594,162 @@ B\)</span>, então <span class="math inline">\(D(A,B)&gt;0\)</span>;</p></li>
 D(B,A)\)</span></p></li>
 <li><p><em>Desigualdade triangular</em>: <span class="math inline">\(D(A,B)+D(B,C) \geq D(A,C)\)</span></p></li>
 </ol>
-<p>Em relação às distâncias</p>
-<ol style="list-style-type: upper-roman">
-<li><p>Distancia Euclidiana: ;</p></li>
-<li><p>Distancia Euclidiana Quadrática;</p></li>
-<li><p>Distancia Euclidiana Ponderada;</p></li>
-<li><p>Distância de Minkowsky (city-block)</p></li>
+<p>Em relação às distâncias sabe-se pelo Teorema de Pitágoras que <span class="math inline">\(c^2=a^2+b^2\)</span>, assim, <span class="math inline">\(c=\sqrt{a^2+b^2}\)</span>, que é a
+<strong>Distância Euclidiana</strong> entre dois pontos (A e B). Em
+termos de variáveis, tem-se:</p>
+<p><span class="math display">\[
+D_{AB}=\sqrt{(X_{2A}-X_{2B})^2+(X_{1B}-X_{1A})^2}
+\]</span> matricialmente, a Distância Euclidiana é definida por <span class="math inline">\(D_{AB}=\sqrt{(X_a-X_b)&#39;(X_a-X_b)}\)</span> e
+possui as seguintes propriedades:</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Base geométrica bem definida;</p></li>
+<li><p>Invariante com relação à transformação de origem;</p></li>
+<li><p>Invariante com relação à transformação ortogonal;</p></li>
+<li><p>Não invariante com relação à transformação de escala;</p></li>
+<li><p>Não invariante com relação à transformação não
+ortogonal.</p></li>
 </ol>
+<p>A <strong>Distância Euclidiana Quadrática</strong> é dada por</p>
+<p><span class="math display">\[
+D_{AB}^2=\sum_{j=1}^p(x_{ja}-x_{jb})^2
+\]</span></p>
+<p>A <strong>Distância Euclidiana Ponderada</strong> é definida por</p>
+<p><span class="math display">\[
+$D_{AB}=\sqrt{(X_a-X_b)&#39;A(X_a-X_b)}$
+\]</span></p>
+<p>com A sendo uma matriz de ponderação (pesos diferentes de acordo com
+a variância das variáveis). Se <span class="math inline">\(A=I\)</span>,
+<span class="math inline">\(D_{AB}\)</span> é a <strong>Distância
+Euclidiana</strong>. Se <span class="math inline">\(A=S^{-1}\)</span>,
+ou seja, inverso da matriz var-cov, tem-se a <strong>Distância de
+Mahalanobis</strong>.</p>
+<p>Se <span class="math inline">\(A=diag(S_i^2)^{-1}\)</span>, em que
+<span class="math inline">\(S_i^2\)</span> é a variância amostral da
+i-ésima variável aleatória, leva-se em consideração na ponderação apenas
+as diferenças de variâncias das variáveis.</p>
+<p>Se <span class="math inline">\(A=diag(1/p)\)</span> tem-se a
+Distância Euclidiana Média;</p>
+<p>A <strong>Distância de Minkowsky</strong> é dada por</p>
+<p><span class="math display">\[
+D_{AB}=\Big [\sum_i^p w_i | X_{ia} - X_{ib}|
+^\lambda  \Big]^{\frac{1}{\lambda}}
+\]</span></p>
+<p>onde <span class="math inline">\(w_i\)</span> são pesos de ponderação
+para as variáveis. Se <span class="math inline">\(\lambda=2\)</span>,
+tem-se a <strong>Distância Euclidiana</strong>. Esta distância é menos
+afetada pela presença de valores discrepantes numa amostra do que a
+distância Euclidiana. Se <span class="math inline">\(\lambda=1\)</span>,
+tem-se a <strong>Distância city-block</strong> também conhecida como
+<strong>Manhattan</strong>.</p>
+<p>Para observações representadas através de variáveis qualitativas, é
+necessária a criação de variáveis binárias, as quais assumem o valor 1
+se uma característica de interesse está presente, e 0, caso contrário.
+Dessa forma, para um par de observações (i; k) medidos através de p
+variáveis binárias, considere a seguinte Tabela de Contigência:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center"></th>
+<th align="center"></th>
+<th align="center">Observação k</th>
+<th align="center"></th>
+<th align="center"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">Total</td>
+</tr>
+<tr class="even">
+<td align="center">Observação i</td>
+<td align="center">1</td>
+<td align="center">a</td>
+<td align="center">b</td>
+<td align="center">a+b</td>
+</tr>
+<tr class="odd">
+<td align="center"></td>
+<td align="center">0</td>
+<td align="center">c</td>
+<td align="center">d</td>
+<td align="center">c+d</td>
+</tr>
+<tr class="even">
+<td align="center"></td>
+<td align="center">Total</td>
+<td align="center">a+c</td>
+<td align="center">b+d</td>
+<td align="center">p=a+b+c+d</td>
+</tr>
+</tbody>
+</table>
+<p>com base nesta tabela é possível listar algumas medidas de
+similaridade e a idéia básica de cada uma delas.</p>
+<table>
+<colgroup>
+<col width="70%" />
+<col width="30%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="center"><span class="math inline">\(\frac{a+d}{p}\)</span></td>
+<td align="left">Pesos iguais para pares 1-1 e 0-0</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(\frac{2(a+d)}{2(a+d)+b+c}\)</span></td>
+<td align="left">Peso em dobro para pares 1-1 e 0-0</td>
+</tr>
+<tr class="odd">
+<td align="center"><span class="math inline">\(\frac{a+d}{a+d+2(b+c)}\)</span></td>
+<td align="left">Peso em dobro para pares descasados</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(\frac{a}{p}\)</span></td>
+<td align="left">Sem pares 0-0 no numerador</td>
+</tr>
+<tr class="odd">
+<td align="center"><span class="math inline">\(\frac{a}{a+b+c}\)</span></td>
+<td align="left">Sem pares 0-0 no numerador e no denominador</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(\frac{2a}{2a+b+c}\)</span></td>
+<td align="left">Sem pares 0 - 0 no numerador e no denominador.</td>
+</tr>
+<tr class="odd">
+<td align="center"></td>
+<td align="left">Peso em dobro para pares 1 - 1.</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(\frac{a}{a+2(b+c)}\)</span></td>
+<td align="left">Sem pares 0 - 0 no numerador e no denominador.</td>
+</tr>
+<tr class="odd">
+<td align="center"></td>
+<td align="left">Peso em dobro para pares descasados.</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(\frac{a}{b+c}\)</span></td>
+<td align="left">Razão entre pares 1 - 1 e pares descasados.</td>
+</tr>
+</tbody>
+</table>
+<p>Organiza-se a tabela de contingência e calcula-se o coeficiente de
+similaridade para cada par de observações. Os coeficientes são dispostos
+em uma matriz simétrica n x n denominada <strong>matriz de
+similaridade</strong>.</p>
 <p><br></p>
 </div>
 <div id="técnicas-para-construção-de-conglomerados-clusters" class="section level2" number="2.3">
 <h2><span class="header-section-number">2.3</span> Técnicas para
 construção de Conglomerados (Clusters)</h2>
 <p><br></p>
-<p>Para Mingoti (2005), “as técnicas de conglomerados ou clusters são
-frequentemente classificadas em dois tipos: técnicas hierárquicas e não
-hierárquicas, sendo que as hierçrquicas são classificadas em
+<p>Para Mingoti (2005, p.164), “as técnicas de conglomerados ou clusters
+são frequentemente classificadas em dois tipos: técnicas hierárquicas e
+não hierárquicas, sendo que as hierárquicas são classificadas em
 aglomerativas e divisivas”.</p>
 <p>Os <strong>Métodos hierárquicos aglomerativos</strong> partem do
 princípio de que no início do processo de agrupamento têm-se n
@@ -2617,7 +2757,7 @@ conglomerados (cada elemento é um conglomerado). Em cada passo do
 algoritmo, os elementos vão sendo agrupados, formando novos
 conglomerados até o ponto em que todos os elementos estão num único
 grupo.</p>
-<p>Em termos de variabilidade, no estçgio inicial é a menor possível e
+<p>Em termos de variabilidade, no estágio inicial é a menor possível e
 no final, a máxima possível, pois todos os elementos estão agrupados em
 apenas 1 cluster. Se dois elementos aparecem juntos num mesmo grupo em
 algum estçgio do processo de agrupamento, permanecerão juntos até o

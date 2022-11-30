@@ -396,7 +396,7 @@ V) Interpretação e Análise: pode-se fazer estatística descritiva, diferença
 
 <br>
 
-Valor numérico que quantifica o grau de semelhança entre um par de objetos. Pode ser de dois tipos: similaridade ou dissimilaridade. Para variáveis quantitativas, quando se buscas agrupar observações as distâncias são as mais usadas. São medidas de dissimilaridade entre objetos. O coeficiente de distância assume valor máximo para objetos totalmente diferentes e valor zero para dois objetos idênticos considerando todas as variáveis. 
+Valor numérico que quantifica o grau de semelhança entre um par de objetos. Pode ser de dois tipos: similaridade ou dissimilaridade. Para variáveis quantitativas, quando se buscas agrupar observações as distâncias são as mais usadas. São medidas de **dissimilaridade** entre objetos. O coeficiente de distância assume valor máximo para objetos totalmente diferentes e valor zero para dois objetos idênticos considerando todas as variáveis. 
 
 Em algumas aplicações deseja-se agrupar variáveis ao invés de observações. Neste caso, o coeficiente de correlação de Pearson é mais comumente utilizado. No caso de variáveis binárias, os dados são novamente rearranjados na forma de uma
 tabela de contigência, com as variáveis formando as categorias.
@@ -411,15 +411,76 @@ III) *Simetria*: $D(A,B) = D(B,A)$
 
 IV) *Desigualdade triangular*: $D(A,B)+D(B,C) \geq D(A,C)$
 
-Em relação às distâncias
+Em relação às distâncias sabe-se pelo Teorema de Pitágoras que $c^2=a^2+b^2$, assim, $c=\sqrt{a^2+b^2}$, que é a  **Distância Euclidiana**  entre dois pontos (A e B). Em termos de variáveis, tem-se:
 
-I) Distancia Euclidiana: ;
+$$
+D_{AB}=\sqrt{(X_{2A}-X_{2B})^2+(X_{1B}-X_{1A})^2}
+$$
+matricialmente, a Distância Euclidiana é definida por $D_{AB}=\sqrt{(X_a-X_b)'(X_a-X_b)}$ e possui as seguintes propriedades:
 
-II) Distancia Euclidiana Quadrática;
+a) Base geométrica bem definida;
 
-III) Distancia Euclidiana Ponderada;
+b) Invariante com relação à transformação de origem;
 
-IV) Distância de Minkowsky (city-block)
+c) Invariante com relação à transformação ortogonal; 
+
+d) Não invariante com relação à transformação de escala;
+
+e) Não invariante com relação à transformação não ortogonal.
+
+
+A **Distância Euclidiana Quadrática** é dada por
+
+$$
+D_{AB}^2=\sum_{j=1}^p(x_{ja}-x_{jb})^2
+$$
+
+A **Distância Euclidiana Ponderada** é definida por
+
+$$
+$D_{AB}=\sqrt{(X_a-X_b)'A(X_a-X_b)}$ 
+$$
+
+com A sendo uma matriz de ponderação (pesos diferentes de acordo com a variância das variáveis). Se $A=I$, $D_{AB}$ é a **Distância Euclidiana**. Se $A=S^{-1}$, ou seja, inverso da matriz var-cov, tem-se a **Distância de Mahalanobis**.
+
+Se $A=diag(S_i^2)^{-1}$, em que $S_i^2$ é a variância amostral da i-ésima variável aleatória, leva-se em consideração na ponderação apenas as diferenças de variâncias das variáveis.
+
+Se $A=diag(1/p)$ tem-se a Distância Euclidiana Média;
+
+A **Distância de Minkowsky** é dada por 
+
+$$
+D_{AB}=\Big [\sum_i^p w_i | X_{ia} - X_{ib}| ^\lambda  \Big]^{\frac{1}{\lambda}}
+$$
+
+onde $w_i$ são pesos de ponderação para as variáveis. Se $\lambda=2$, tem-se a **Distância Euclidiana**. Esta distância é menos afetada pela presença de valores discrepantes numa amostra do que a distância Euclidiana. Se $\lambda=1$, tem-se a **Distância city-block** também conhecida como **Manhattan**.
+
+Para observações representadas através de variáveis qualitativas, é necessária a criação de variáveis binárias, as quais assumem o valor 1 se uma característica de interesse está presente, e 0, caso contrário. Dessa forma, para um par de observações (i; k) medidos através de p variáveis binárias, considere a seguinte Tabela de Contigência:
+
+|              |       | Observação k |     |           |
+|:------------:|:-----:|:------------:|:---:|:---------:|
+|              |       | 1            | 0   | Total     |
+| Observação i | 1     | a            | b   | a+b       |
+|              | 0     | c            | d   | c+d       |
+|              | Total | a+c          | b+d | p=a+b+c+d |
+
+
+com base nesta tabela é possível listar algumas medidas de similaridade e a idéia básica de cada uma delas. 
+
+|              |       | 
+|:------------:|:-----|
+| $\frac{a+d}{p}$  |Pesos iguais para pares 1-1 e 0-0   |
+| $\frac{2(a+d)}{2(a+d)+b+c}$ |  Peso em dobro para pares 1-1 e 0-0 |
+| $\frac{a+d}{a+d+2(b+c)}$  |  Peso em dobro para pares descasados |
+| $\frac{a}{p}$ | Sem pares 0-0 no numerador |
+| $\frac{a}{a+b+c}$  | Sem pares 0-0 no numerador e no denominador  |
+| $\frac{2a}{2a+b+c}$  | Sem pares 0 - 0 no numerador e no denominador.|
+|   | Peso em dobro para pares 1 - 1.    |
+| $\frac{a}{a+2(b+c)}$  |  Sem pares 0 - 0 no numerador e no denominador. |
+|   | Peso em dobro para pares descasados.  |
+| $\frac{a}{b+c}$  | Razão entre pares 1 - 1 e pares descasados. |
+
+Organiza-se a tabela de contingência e calcula-se o coeficiente de similaridade para cada par de observações. Os coeficientes são dispostos em uma matriz simétrica n x n denominada **matriz de similaridade**.
 
 <br>
 
@@ -427,11 +488,11 @@ IV) Distância de Minkowsky (city-block)
 
 <br>
 
-Para Mingoti (2005), "as técnicas de conglomerados ou clusters são frequentemente classificadas em dois tipos: técnicas hierárquicas e não hierárquicas, sendo que as hierçrquicas são classificadas em aglomerativas e divisivas".
+Para Mingoti (2005, p.164), "as técnicas de conglomerados ou clusters são frequentemente classificadas em dois tipos: técnicas hierárquicas e não hierárquicas, sendo que as hierárquicas são classificadas em aglomerativas e divisivas".
 
 Os **Métodos hierárquicos aglomerativos** partem do princípio de que no início do processo de agrupamento têm-se n conglomerados (cada elemento é um conglomerado). Em cada passo do algoritmo, os elementos vão sendo agrupados, formando novos conglomerados até o ponto em que todos os elementos estão num único grupo.
 
-Em termos de variabilidade, no estçgio inicial é a menor possível e no final, a máxima possível, pois todos os elementos estão agrupados em apenas 1 cluster. Se dois elementos aparecem juntos num mesmo grupo em algum estçgio do processo de agrupamento, permanecerão juntos até o final, ou seja, não podem mais ser separados.
+Em termos de variabilidade, no estágio inicial é a menor possível e no final, a máxima possível, pois todos os elementos estão agrupados em apenas 1 cluster. Se dois elementos aparecem juntos num mesmo grupo em algum estçgio do processo de agrupamento, permanecerão juntos até o final, ou seja, não podem mais ser separados.
 
 Devido a esta propriedade, denominada hierarquia, se pode construiu o **Dendograma**. Dendograma é um gráfico em forma de árvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade.
 
