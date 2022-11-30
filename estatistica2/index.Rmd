@@ -363,7 +363,16 @@ matcor(perform, testes)
 
 <br>
 
-Segundo Mingoti (2005), "a Análise de Agrupamentos, também conhecida como Análise de Conglomerados, Classificação ou Cluster, tem como objetivo dividir os elementos da amostra, ou população, em grupos de forma que os elementos pertencentes a um mesmo grupo sejam similares entre si com respeito às variáveis (características) que neles foram medidas, e os elementos em grupos diferentes sejam heterogêneos em relação a estas mesmas características".
+Segundo Mingoti (2005, p.155), "a Análise de Agrupamentos, também conhecida como Análise de Conglomerados, Classificação ou Cluster, tem como objetivo dividir os elementos da amostra, ou população, em grupos de forma que os elementos pertencentes a um mesmo grupo sejam similares entre si com respeito às variáveis (características) que neles foram medidas, e os elementos em grupos diferentes sejam heterogêneos em relação a estas mesmas características". 
+
+Assim, a idéia básica é maximizar a homogeneidade dentro dos grupos ao mesmo tempo em que se maximiza a heterogeneidade entre os grupos. Para formar grupos de objetos tem-se que medir e comparar a semelhança entre eles. A medida de semelhança fica dificultada quando se considera várias variáveis (características).
+
+No processo de agrupamento, primeiro o conjunto de dados será dividido em grupos com elementos parecidos entre si e diferentes dos outros grupos. Depois os grupos encontrados serão analisados até que efetivamente se encontre a existência de padrões entre eles.
+
+![Etapas da Análise de Agrupamento - Clustering](img_r/cluster1.png){width=100%}
+
+
+No caso univariado  é possível que apenas uma análise visual ou gráfica dos dados seja suficiente para decidir sobre os agrupamentos de observaçoes. Contudo, isto não é muito mais difícil quando se tem um conjunto maior de variáveis. Para realizar as técnicas de cluster é necessário definir o conceito de distância.
 
 <br>
 
@@ -387,9 +396,20 @@ V) Interpretação e Análise: pode-se fazer estatística descritiva, diferença
 
 <br>
 
-Valor numérico que quantifica o grau de semelhança entre um par de objetos. Pode ser de dois tipos: similaridade ou dissimilaridade. Para quantitativas, as distâncias são as mais usadas. São medidas de dissimilaridade.
+Valor numérico que quantifica o grau de semelhança entre um par de objetos. Pode ser de dois tipos: similaridade ou dissimilaridade. Para variáveis quantitativas, quando se buscas agrupar observações as distâncias são as mais usadas. São medidas de dissimilaridade entre objetos. O coeficiente de distância assume valor máximo para objetos totalmente diferentes e valor zero para dois objetos idênticos considerando todas as variáveis. 
 
-I) Distancia Euclidiana;
+Em algumas aplicações deseja-se agrupar variáveis ao invés de observações. Neste caso, o coeficiente de correlação de Pearson é mais comumente utilizado. No caso de variáveis binárias, os dados são novamente rearranjados na forma de uma
+tabela de contigência, com as variáveis formando as categorias.
+
+Os coeficientes de distância mais comuns têm as seguintes propriedades:
+
+I) *Mínimo Zero*: Se $A=B$, então $D(A,B)=0$;
+II) *Positividade*: Se $A \neq B$, então $D(A,B)>0$;
+III) *Simetria*: $D(A,B) = D(B,A)$
+IV) *Desigualdade triangular*: $D(A,B)+D(B,C) \geq D(A,C)$
+
+
+I) Distancia Euclidiana: ;
 
 II) Distancia Euclidiana Quadrática;
 
@@ -409,7 +429,7 @@ Os **Métodos hierárquicos aglomerativos** partem do princípio de que no iníc
 
 Em termos de variabilidade, no estçgio inicial é a menor possível e no final, a máxima possível, pois todos os elementos estão agrupados em apenas 1 cluster. Se dois elementos aparecem juntos num mesmo grupo em algum estçgio do processo de agrupamento, permanecerão juntos até o final, ou seja, não podem mais ser separados.
 
-Devido a esta propriedade, denominada hierarquia, se pode construiu o **Dendograma**. Dendograma é um grçfico em forma de çrvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade.
+Devido a esta propriedade, denominada hierarquia, se pode construiu o **Dendograma**. Dendograma é um gráfico em forma de árvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade.
 
 <br>
 
