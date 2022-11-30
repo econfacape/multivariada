@@ -404,10 +404,14 @@ tabela de contigência, com as variáveis formando as categorias.
 Os coeficientes de distância mais comuns têm as seguintes propriedades:
 
 I) *Mínimo Zero*: Se $A=B$, então $D(A,B)=0$;
+
 II) *Positividade*: Se $A \neq B$, então $D(A,B)>0$;
+
 III) *Simetria*: $D(A,B) = D(B,A)$
+
 IV) *Desigualdade triangular*: $D(A,B)+D(B,C) \geq D(A,C)$
 
+Em relação às distâncias
 
 I) Distancia Euclidiana: ;
 
