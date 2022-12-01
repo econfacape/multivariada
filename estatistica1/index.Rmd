@@ -876,3 +876,79 @@ bart_spher(dados)
 ```
 
 <br>
+
+Um outro exemplo é do trabalho que visou construiu um Índice de Desenvolvimento Humano da mesorregião do Campo das Vertentes-MG (IDF-CV), para o ano de 2000, com base em 10 indicadores socioeconômicos de saúde, infraestrutura, educação e vulnerabilidade renda (Esperança de vida ao nascer; Mortalidade até um ano de idade; em cada mil crianças nascidas vivas; Percentual de pessoas que vivem em domicílios com banheiro e água encanada; Percentual de pessoas que vivem em domicílios com energia elétrica e geladeira; Percentual de pessoas que vivem em domicílios urbanos com serviço de coleta de lixo; Percentual de pessoas que vivem em domicílios com carro, computador e TV; Percentual da renda proveniente de transferências governamentais; Razão entre a renda média dos 20% mais ricos e a dos 40% mais pobres; Percentual de pessoas que vivem em famílias com razão de dependência maior que 75%; Taxa de alfabetização). Para isto, foi utilizada a técnica da Análise Fatorial.
+<br>
+
+```  {r estat13, warning=FALSE, message=FALSE}
+#Direcionado o R para o Diretorio a ser trabalhado
+setwd('/Users/jricardofl/Dropbox/tempecon/multivariada')
+
+library(tidyverse)
+library(skimr)
+library(psych)
+library(REdaS)
+
+#Lendo os dados no R
+dadosc <- read.csv2('idh_mg.csv', header=TRUE, sep=";", dec=".")
+
+dados <- dadosc[,-1]
+  
+attach(dados)
+glimpse(dados)
+
+head(dados)
+tail(dados)
+
+# Estatística descritiva das variáveis
+summary(dados)
+skim(dados)
+
+#Estatística KMO
+KMO(cor(dados))
+
+# Bartlett teste de esfericidade
+cortest.bartlett(cor(dados), n = nrow(dados))
+
+bart_spher(dados)
+
+#Correlaçoes Parciais - Matriz anti-imagem coeficientes de corr
+partial.cor <- function (X, ...)
+{
+  R <- cor(X, ...)
+  RI <- solve(R)
+  D <- 1/sqrt(diag(RI))
+  Rp <- -RI * (D %o% D)
+  diag(Rp) <- 0
+  rownames(Rp) <- colnames(Rp) <- colnames(X)
+  Rp
+}
+matcorp <- partial.cor(dados)
+print(matcorp, digits=2)
+
+# Definição do número de Fatores
+
+eigv <- eigen(cor(dados))
+eigv <- data.frame(nfact = 1:ncol(dados), eigval = eigv$values)
+ggplot(data = eigv, mapping = aes(nfact, eigval)) +
+geom_line() +
+geom_point() +
+geom_abline(slope = 0, intercept = 1, color = "red") +
+labs(x = "Número de fatores",
+y = "Autovalor",
+title = "Scree plot") +
+theme_bw()
+
+#Padronizaçao dos dados
+dados.pad <-as.data.frame(scale(dados))
+
+s <- cov(dados.pad) #matriz de cov com var pad = mat correlaçoes origem
+
+#Autovalores e Autovetores da Matriz de Covariancias
+lambda <-eigen(s)$values
+lambda[1:3] 
+evec <-eigen(s)$vectors
+evec[,1:3]
+```
+
+<br>
