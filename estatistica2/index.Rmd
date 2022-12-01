@@ -494,7 +494,11 @@ Os **Métodos hierárquicos aglomerativos** partem do princípio de que no iníc
 
 Em termos de variabilidade, no estágio inicial é a menor possível e no final, a máxima possível, pois todos os elementos estão agrupados em apenas 1 cluster. Se dois elementos aparecem juntos num mesmo grupo em algum estçgio do processo de agrupamento, permanecerão juntos até o final, ou seja, não podem mais ser separados.
 
-Devido a esta propriedade, denominada hierarquia, se pode construiu o **Dendograma**. Dendograma é um gráfico em forma de árvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade.
+Devido a esta propriedade, denominada hierarquia, se pode construiu o **Dendograma**. Dendograma é um gráfico em forma de árvore no qual a escala vertical indica o nível de similaridade (ou dissimilaridade). No eixo horizontal tem-se os elementos e no vertical a altura correspondente ao nível em que os elementos foram considerados semelhantes. Quanto maior a altura maior a variabilidade, ou seja, maior a heterogeneidade dos grupos a serem unidos.
+
+A outra técnica de construção dos clusters é chamada de **Método hierárquivo Divisivo**,  que se inicia com todos os objetos em um grupo; formam-se subgrupos desagregando os grupos formados até terminar com cada objeto formando um grupo.
+
+Existem ainda os **Métodos não hierárquicos, também denominados de métodos de partição**. Inicia-se com um número pré definido de grupos e a cada passo procura-se realocar os objetos de maneira a encontrar a melhor partição, isto é, a que minimiza a variância dentro do grupo e maximiza a variância entre grupos. Os métodos não hierárquicos não geram dendrograma, são aplicados a casos (observações) e não a variáveis e são mais indicados para amostras grandes.
 
 <br>
 
@@ -502,18 +506,104 @@ Devido a esta propriedade, denominada hierarquia, se pode construiu o **Dendogra
 
 <br>
 
-I) Método de ligação simples;
+I) **Método de ligação simples**: também denominado de vizinho mais próximo ou *single linkage*. A similaridade entre dois grupos é definida pelos elementos mais parecidos. É a distância entre os vizinhos mais próximos ou entre os elementos mais parecidos de cada conglomerado.
 
-II) Método de ligação completa ou do vizinho mais distante;
+$$
+D_{I,II} = min\{{d_{ij}, i \in I, j \in II}\}
+$$
 
-III) Método da média das distâncias (average linkage);
+II) **Método de ligação completa ou do vizinho mais distante**: A similaridade entre dois grupos é definida pelos elementos que são "menos semelhantes" entre si. Em cada passo do algoritmo são combinados os elementos que apresentarem o menor valor máximo de distância.
 
-IV) Método dos centróides;
 
-V) Método de Ward.
+$$
+D_{I,II} = max\{{d_{ij}, i \in I, j \in II}\}
+$$
+
+III) **Método da média das distâncias** (*average linkage*): Considera a distância entre dois grupos como a média das distâncias entre todos os pares de elementos dos dois grupos que estão sendo comparados.
+
+$$
+D_{i,j}=\frac{\sum_{i=1}^{n_I} \sum_{j=1}^{n_{II}}d_{ij}}{n_I n_{II}}
+$$
+
+IV) **Método dos centróides**: A distância entre dois grupos é definida como sendo a distância entre os vetores de médias (centróides), dos grupos comparados. É a distância Euclidiana quadrática entre os vetores de médias amostrais.
+
+$$
+D_{AB}=(\bar X_a - \bar X_b)'(\bar X_a - \bar X_b)
+$$
+
+V) **Método de Ward**: No processo aglomerativo a medida que se agrupa o nível de similaridade diminui. Em cada passo do agrupamento ocorre diminuição de variabilidade entre grupos e aumento dentro dos grupos. O método de Ward se baseia na mudança de variação que ocorre de um estágio para outro. Este método tende a formar grupos com maior homogeneidade interna. O método considera o aumento na soma de quadrados dos erros como critério para juntar dois grupos. Para um dado grupo g, a soma de quadrados dos erros, $SQE_g$, é a soma dos desvios ao quadrado de cada item para a média do grupo (centróide). 
+
+Em um estágio com G grupos, define-se $SQE$ como a soma $SQE=SQE_1+SQE_2+SQE_3+ \dots SQE_G$. Quando se junta dois grupos, SQE aumenta. Em cada etapa, a união de todos os pares de grupos é analisada. Junta-se os dois grupos que resultam no menor aumento de $SQE$
 
 Segundo Mingoti (2005), "os métodos de ligação simples, completa e da média podem ser utilizados tanto para variáveis quantitativas, quanto qualitativas, ao contrário dos métodos do centróide e de Ward que são apropriados apenas para variáveis quantitativas, já que têm como base a comparação de vetores de médias".
 
+<br>
+
+## Análise de Conglomerados (Clusters) no R - Método Hieráquico
+
+<br>
+
+
+```  {r estat8, warning=FALSE, message=FALSE}
+#Direcionado o R para o Diretorio a ser trabalhado
+setwd('/Users/jricardofl/Dropbox/tempecon/dados_gescilene')
+
+#Lendo os dados no R
+library(foreign)
+library(car)
+library(tidyverse)
+#library(Rcmdr)
+library(corrplot)
+library(MVar.pt)
+library(cluster)
+
+#Entrada de Dados
+dados <- read.dta("dados_gesc.dta")
+str(dados)
+
+# Nomes das Variáveis utilizadas 
+#x1 Idade
+#x2	Escolaridade
+#x3	Renda Bruta Total
+#x4 Produtividade
+#x5 Valor total anual  de mão de obra permanente
+#x6	Valor Total com custo anual com insumos agrícolas nas ativ. Irrig. em 2014
+#x7	Custo com energia eletrica e agua
+#x8 Capital total empregado na ativ irrig em 2014
+#x9	N total de empregados
+#x10 Indice de introducao de inovacao (III)
+#x11 Indice de Inovacoes realizadas (II)
+#x12 Gastos para desenvolver as atividade de inovacao sobre faturamento de 2014
+#x13 Quantidade de tecnologia agricola utilizada na atividade irrigada	
+#x14 Dummy se a empresa realizou atividades de treinamento e capacitacao de recursos humanos entre 2010 a 2014
+#x15 Indice de Fonte de Informacao
+#x16 Dummy se empresa esteve envolvida em atividades cooperativas entre os anos de 2010 e 2014
+#####################################################
+
+#dados <- dados1 %>% select(-x14, -x16)
+dados <- dados[,-c(14,16)]
+
+#Se quiser padronizar os dados
+dados.pad <-as.data.frame(scale(dados))
+
+#Analise Fatorial
+fatorial1 <- factanal(dados.pad, factors=4, rotation="none", na.action=na.omit)
+fatorial2 <- factanal(dados.pad, factors=4, rotation="varimax", na.action=na.omit, scores = c("regression"))
+
+#Analise de Cluster
+#Cluster pelo métodos Hierarquicos
+d <-dist(dados.pad, method = "euclidean")
+h.fit <-hclust(d, method = "ward.D")
+plot(h.fit)
+
+groups <- cutree(h.fit, k=3)
+rect.hclust(h.fit, k=3, border="red")
+
+summary(fatorial2$scores)
+attach(dados)
+by(dados, groups, summary)
+
+```
 
 ## Métodos Não-Hierárquicos
 
