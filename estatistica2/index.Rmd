@@ -556,6 +556,11 @@ library(tidyverse)
 library(corrplot)
 library(MVar.pt)
 library(cluster)
+library(clValid) # Avaliação dos grupos
+library(e1071) # Fuzzy K-médias
+library(factoextra) # Vizualização de grupos
+library(gridExtra) # Ferramentas gráficas
+library(ggforce) # Ferramentas gráficas
 
 #Entrada de Dados
 dados <- read.dta("dados_gesc.dta")
@@ -591,17 +596,210 @@ fatorial1 <- factanal(dados.pad, factors=4, rotation="none", na.action=na.omit)
 fatorial2 <- factanal(dados.pad, factors=4, rotation="varimax", na.action=na.omit, scores = c("regression"))
 
 #Analise de Cluster
-#Cluster pelo métodos Hierarquicos
+# Função que obtém o WSS para o método hierárquico
+# NÃO MUDAR!
+get_wss <- function(d, cluster){
+  d <- stats::as.dist(d)
+  cn <- max(cluster)
+  clusterf <- as.factor(cluster)
+  clusterl <- levels(clusterf)
+  cnn <- length(clusterl)
+  
+  if (cn != cnn) {
+    warning("cluster renumbered because maximum != number of clusters")
+    for (i in 1:cnn) cluster[clusterf == clusterl[i]] <- i
+    cn <- cnn
+  }
+  cwn <- cn
+  # Compute total within sum of square
+  dmat <- as.matrix(d)
+  within.cluster.ss <- 0
+  for (i in 1:cn) {
+    cluster.size <- sum(cluster == i)
+    di <- as.dist(dmat[cluster == i, cluster == i])
+    within.cluster.ss <- within.cluster.ss + sum(di^2)/cluster.size
+  }
+  within.cluster.ss
+}
+
+# Função que constrói o "gráfico do cotovelo" e aponta o K ótimo
+# NÃO MUDAR!
+elbow.plot <- function(x, kmax = 15, alg = "kmeans") {
+  # alg = c("kmeans", "cmeans", "hclust")
+  wss <- c()
+  if (alg == "kmeans") {
+    for (i in 1:kmax) {
+      set.seed(13)
+      tmp <- kmeans(x, i)
+      # wss[i] <- get_wss(dist(x), tmp$cluster)
+      wss[i] <- tmp$tot.withinss
+    }
+    tmp <- data.frame(k = 1:kmax, wss)
+    max_k <- max(tmp$k)
+    max_k_wss <- tmp$wss[which.max(tmp$k)]
+    max_wss <- max(tmp$wss)
+    max_wss_k <- tmp$k[which.max(tmp$wss)]
+    max_df <- data.frame(x = c(max_wss_k, max_k), y = c(max_wss, max_k_wss))
+    tmp_lm <- lm(max_df$y ~ max_df$x)
+    d <- c()
+    for(i in 1:kmax) {
+      d <- c(d, abs(coef(tmp_lm)[2]*i - tmp$wss[i] + coef(tmp_lm)[1]) /
+               sqrt(coef(tmp_lm)[2]^2 + 1^2))
+    }
+    tmp$d <- d
+    ggplot(data = tmp, aes(k, wss)) +
+      geom_line() +
+      geom_segment(aes(x = k[1], y = wss[1],
+                       xend = max(k), yend = wss[which.max(k)]),
+                   linetype = "dashed") +
+      geom_point(aes(size = (d == max(d)), color = (d == max(d))),
+                 show.legend = FALSE) +
+      scale_size_manual(values = c(2,5)) +
+      scale_color_manual(values = c("black", "red")) +
+      labs(x = "Number of clusters",
+           y = "Total within-cluster sum of squares",
+           title = "Elbow plot for the K-means method") +
+      theme_bw()
+  }
+  else if (alg == "cmeans") {
+    for (i in 1:kmax) {
+      if (i == 1) {
+        wss[i] <- get_wss(dist(x), rep(1, nrow(x)))
+      }
+      else {
+        set.seed(13)
+        tmp <- cmeans(x, i)
+        wss[i] <- get_wss(dist(x), tmp$cluster)
+        # wss[i] <- tmp$sumsqrs$tot.within.ss
+      }
+    }
+    tmp <- data.frame(k = 1:kmax, wss)
+    max_k <- max(tmp$k)
+    max_k_wss <- tmp$wss[which.max(tmp$k)]
+    max_wss <- max(tmp$wss)
+    max_wss_k <- tmp$k[which.max(tmp$wss)]
+    max_df <- data.frame(x = c(max_wss_k, max_k), y = c(max_wss, max_k_wss))
+    tmp_lm <- lm(max_df$y ~ max_df$x)
+    d <- c()
+    for(i in 1:kmax) {
+      d <- c(d, abs(coef(tmp_lm)[2]*i - tmp$wss[i] + coef(tmp_lm)[1]) /
+               sqrt(coef(tmp_lm)[2]^2 + 1^2))
+    }
+    tmp$d <- d
+    ggplot(data = tmp, aes(k, wss)) +
+      geom_line() +
+      geom_segment(aes(x = k[1], y = wss[1],
+                       xend = max(k), yend = wss[which.max(k)]),
+                   linetype = "dashed") +
+      geom_point(aes(size = (d == max(d)), color = (d == max(d))),
+                 show.legend = FALSE) +
+      scale_size_manual(values = c(2,5)) +
+      scale_color_manual(values = c("black", "red")) +
+      labs(x = "Number of clusters",
+           y = "Total within-cluster sum of squares",
+           title = "Elbow plot for the fuzzy K-means method") +
+      theme_bw()
+  }
+  else if (alg == "hclust") {
+    for (i in 1:kmax) {
+      set.seed(13)
+      tmp <- hcut(x, i)
+      wss[i] <- get_wss(dist(x), tmp$cluster)
+    }
+    tmp <- data.frame(k = 1:kmax, wss)
+    max_k <- max(tmp$k)
+    max_k_wss <- tmp$wss[which.max(tmp$k)]
+    max_wss <- max(tmp$wss)
+    max_wss_k <- tmp$k[which.max(tmp$wss)]
+    max_df <- data.frame(x = c(max_wss_k, max_k), y = c(max_wss, max_k_wss))
+    tmp_lm <- lm(max_df$y ~ max_df$x)
+    d <- c()
+    for(i in 1:kmax) {
+      d <- c(d, abs(coef(tmp_lm)[2]*i - tmp$wss[i] + coef(tmp_lm)[1]) /
+               sqrt(coef(tmp_lm)[2]^2 + 1^2))
+    }
+    tmp$d <- d
+    ggplot(data = tmp, aes(k, wss)) +
+      geom_line() +
+      geom_segment(aes(x = k[1], y = wss[1],
+                       xend = max(k), yend = wss[which.max(k)]),
+                   linetype = "dashed") +
+      geom_point(aes(size = (d == max(d)), color = (d == max(d))),
+                 show.legend = FALSE) +
+      scale_size_manual(values = c(2,5)) +
+      scale_color_manual(values = c("black", "red")) +
+      labs(x = "Number of clusters",
+           y = "Total within-cluster sum of squares",
+           title = "Elbow plot for the hierarchical method") +
+      theme_bw()
+  }
+}
+
+# Função vizualização dos grupos
+# NÃO MUDAR!
+cluster_viz <- function(data, clusters, 
+                        axes = c(1, 2), geom = c("point", "text"), repel = TRUE, 
+                        show.clust.cent = TRUE, ellipse = TRUE, ellipse.type = "convex", 
+                        ellipse.level = 0.95, ellipse.alpha = 0.2, shape = NULL, 
+                        pointsize = 1.5, labelsize = 12, main = "Cluster plot",
+                        ggtheme = theme_bw()) {
+  require(factoextra)
+  data <- scale(data)
+  pca <- stats::prcomp(data, scale = FALSE, center = FALSE)
+  ind <- facto_summarize(pca, element = "ind", result = "coord", axes = axes)
+  eig <- get_eigenvalue(pca)[axes, 2]
+  xlab <- paste0("Dim", axes[1], " (", round(eig[1], 1), "%)")
+  ylab <- paste0("Dim", axes[2], " (", round(eig[2], 1), "%)")
+  colnames(ind)[2:3] <- c("x", "y")
+  label_coord <- ind
+  lab <- NULL
+  if ("text" %in% geom) 
+    lab <- "name"
+  if (is.null(shape)) 
+    shape <- "cluster"
+  plot.data <- cbind.data.frame(ind, cluster = clusters, stringsAsFactors = TRUE)
+  label_coord <- cbind.data.frame(label_coord, cluster = clusters, stringsAsFactors = TRUE)
+  p <- ggpubr::ggscatter(plot.data, "x", "y", color = "cluster", 
+                         shape = shape, size = pointsize, point = "point" %in% geom,
+                         label = lab, font.label = labelsize, repel = repel, 
+                         mean.point = show.clust.cent, ellipse = ellipse, ellipse.type = ellipse.type, 
+                         ellipse.alpha = ellipse.alpha, ellipse.level = ellipse.level, 
+                         main = main, xlab = xlab, ylab = ylab, ggtheme = ggtheme)
+  p
+}
+
+# Encontrar número ótimo de grupos para o método hierárquico
+set.seed(123456789)
+p3 <- elbow.plot(dados.pad, alg = "hclust")
+p3
+
+# K "ótimo" é igual a 4. Mudar de acordo com o seu resultado
+
 d <-dist(dados.pad, method = "euclidean")
 h.fit <-hclust(d, method = "ward.D")
-plot(h.fit)
+plot(h.fit, main='Dendograma - Método Hierárquico', xlab='Cluster das Observações - Distância Euclidiana e Método de Ward', ylab='Altura')
 
-groups <- cutree(h.fit, k=3)
-rect.hclust(h.fit, k=3, border="red")
+groups_a <- cutree(h.fit, k=3)
+groups_a 
+
+groups_b <- cutree(h.fit, k=4)
+groups_b 
+
+groups_c <- cutree(h.fit, k=5)
+dendogram3 <- rect.hclust(h.fit, k=5, border="red")
+dendogram3
 
 summary(fatorial2$scores)
 attach(dados)
-by(dados, groups, summary)
+by(dados, groups_c, summary)
+
+# Agrupamento usando o método hierárquico - 2 forma
+nclust = 5 # Número de grupos de acordo com os gráficos
+fit.hclust <- hcut(dados.pad, 5) # Ajustar K de acordo com o gráfico
+fit.hclust
+
+g_cluster <- cluster_viz(dados.pad, as.factor(fit.hclust$cluster), geom = "point", main = "Gráfico Cluster para o Método Hierárquico")
+plot(g_cluster)
 
 ```
 
@@ -610,5 +808,18 @@ by(dados, groups, summary)
 São métodos de partição de "n" objetos em "k" grupos. Os "k" grupos são pré-determinados. A cada passo verifica-se se os objetos estão alocados da "melhor" maneira. Função objetivo: procura minimizar a variância dentro do grupo e maximizar a variância entre os grupos. 
 
 Não fornece dendograma. Isto porque se em algum passo do algoritmo dois elementos tiverem sido colocados num mesmo cluster, não necessariamente "estarão juntos" na partição final. Bom quando se tem um grande número de observações. O problema principal aqui não é o número de grupos e sim a melhor forma de alocar os elementos em k grupos. O método mais usado é o das k-médias (k-means).
+
+```  {r estat9, warning=FALSE, message=FALSE}
+cluster_kmeans <- elbow.plot(dados.pad)
+cluster_kmeans
+
+kmeans1 <- kmeans(dados.pad, centers=5)
+#Centróides
+kmeans1$centers
+
+#Plot dos Clusters
+clusplot(dados.pad, kmeans1$cluster, main="2D Representação da solução dos Clusters",
+         color=TRUE, shade=TRUE, labels=2, lines=0)
+```
 
 <br>
