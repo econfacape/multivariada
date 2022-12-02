@@ -509,14 +509,14 @@ Existem ainda os **Métodos não hierárquicos, também denominados de métodos 
 I) **Método de ligação simples**: também denominado de vizinho mais próximo ou *single linkage*. A similaridade entre dois grupos é definida pelos elementos mais parecidos. É a distância entre os vizinhos mais próximos ou entre os elementos mais parecidos de cada conglomerado.
 
 $$
-D_{I,II} = min \quad \{{d_{ij}, i \in I, j \in II}\}
+D_{I,II} = min \quad ({d_{ij}, i \in I, j \in II})
 $$
 
 II) **Método de ligação completa ou do vizinho mais distante**: A similaridade entre dois grupos é definida pelos elementos que são "menos semelhantes" entre si. Em cada passo do algoritmo são combinados os elementos que apresentarem o menor valor máximo de distância.
 
 
 $$
-D_{I,II} = max \quad \{{d_{ij}, i \in I, j \in II}\}
+D_{I,II} = max \quad ({d_{ij}, i \in I, j \in II})
 $$
 
 III) **Método da média das distâncias** (*average linkage*): Considera a distância entre dois grupos como a média das distâncias entre todos os pares de elementos dos dois grupos que estão sendo comparados.
