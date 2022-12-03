@@ -833,3 +833,124 @@ plot(g_kmeans)
 ```
 
 <br>
+
+# Análise Discriminante
+
+<br>
+
+A **Análise Discriminante Linear (LDA)** é uma técnica de Análise Multivariada usada com o objetivo de discriminar (separar, diferenciar) populações e/ou classificar observações em populações pré definidas. Para a sua aplicação, é necessário que os grupos para os quais cada elemento amostral pode ser classificado sejam pré-definidos, ou seja, conhecidos a priori considerando-se suas características gerais. Este conhecimento permite a elaboração de uma função matemática chamada de regra de classificação ou discriminação, que é utilizada para classificar novos elementos amostrais nos grupos já existentes. A definição dos grupos é feita de acordo com o problema de pesquisa e os objetivos do estudo.
+
+A LDA, originalmente desenvolvida por R A Fisher (1936) para classificar indivíduos em um dos dois grupos claramente definidos. Posteriormente, foi expandido para classificar os assuntos em mais de dois grupos. A LDA é uma técnica para reduzir o número de dimensões (ou seja, variáveis) em um conjunto de dados, mantendo o máximo de informações possível. Basicamente, ajuda a encontrar a combinação linear das variáveis originais que fornecem a melhor separação possível entre os grupos.
+
+O objetivo é construir uma regra de classificação, baseada na teoria das probabilidades, que minimize o número de classificações incorretas, ou seja, o erro de dizer que um elemento pertence à população A quando na verdade ele pertence à população B. Uma informação importante é saber quais variáveis mais ajudam a explicar a diferença entre os grupos. A idéia básica é saber se as respectivas médias dos grupos provêm de distintas populações.
+
+A Análise Discriminante tem, assim, dois objetivos básicos:
+
+a) Discriminar – consiste em encontrar funções capazes de explicar as diferenças entre os grupos com base em várias variáveis; estas funções captam o máximo de separação entre os grupos.
+
+b) Classificar – consiste no uso das funções para alocar novas observações em um dos grupos pré-estabelecidos.
+Assim, pode-se dizer que existem dois tipos de Análise Discriminante: Descritiva e Preditiva.
+
+As principais aplicações ou exemplos são:
+
+I) Prevendo o sucesso ou fracasso de novos produtos;
+
+II) Aceitar ou rejeitar a admissão de um candidato;
+
+III) Prevendo a categoria de risco de crédito para uma pessoa;
+
+IV) Classificando os pacientes em diferentes categorias.
+
+Para aplicação da LDA deve-se dispor de uma amostra de cada uma das g populações e dados de p variáveis observadas para cada objeto das amostras que podem ser de tamanhos diferentes. Ao contrário da Análise de Cluster em que se procura formar grupos homogêneos na amostra, na LDA parte-se de um número pré-definido de grupos considerados amostras de diferentes populações.
+
+A base de dados utilizada para o exemplo é o da flor Iris ou conjunto de dados Iris de Fisher, um conjunto de dados multivariados introduzido pelo estatístico e biólogo britânico Ronald Fisher em seu artigo de 1936, "O uso de múltiplas medições em problemas taxonômicos, como um exemplo de análise discriminante linear". Às vezes, é chamado de conjunto de dados da íris de Anderson porque Edgar Anderson coletou os dados para quantificar a variação morfológica das flores da íris de três espécies relacionadas. Duas das três espécies foram coletadas na Península de Gaspé, "todas do mesmo campo, colhidas no mesmo dia e medidas ao mesmo tempo pela mesma pessoa com a mesma aparelho". O conjunto de dados consiste em 50 amostras de cada uma das três espécies de Iris ( Iris setosa, Iris virginica e Iris versicolor). Quatro variáveis foram medidas em cada amostra: o comprimento e a largura das sépalas e pétalas, em centímetros. Com base na combinação dessas quatro características, Fisher desenvolveu um modelo discriminante linear para distinguir as espécies umas das outras (Fonte: https://pt.wikipedia.org/wiki/Conjunto_de_dados_flor_Iris).
+
+## Análise Discriminante Linear no R
+
+```  {r estat10, warning=FALSE, message=FALSE}
+
+#Pacotes utilizados
+library(klaR)
+library(psych)
+library(MASS)
+library(ggord)
+library(devtools)
+
+# Obtendo os dados
+data("iris")
+str(iris)
+
+#Criando um gráfico de dispersão para as quatro primeiras variáveis numéricas.
+
+pairs.panels(iris[1:4],
+             gap = 0,
+             bg = c("red", "green", "blue")[iris$Species],
+             pch = 21)
+```
+
+Se pode ver no gráfico, diagrama de dispersão, histograma e valores de correlação. Em seguida, se quer criar os melhores grupos de separação com base nessas espécies. Vai ser criado um conjunto de dados de treinamento (training) e um conjunto de dados de teste (test) para fins de previsão e teste. 60% do conjunto de dados usado para fins de treinamento e 40% usados para fins de teste.
+
+```  {r estat11, warning=FALSE, message=FALSE}
+
+#Separação dos grupos
+set.seed(123456789)
+ind <- sample(2, nrow(iris),
+              replace = TRUE,
+              prob = c(0.6, 0.4))
+training <- iris[ind==1,]
+testing <- iris[ind==2,]
+
+# Análise discriminante linear
+linear <- lda(Species~., data=training)
+linear
+
+attributes(linear)
+
+# Histograma empilhado para valores de funções discriminantes.
+p <- predict(linear, training)
+ldahist(data = p$x[,1], g = training$Species)
+```
+
+
+Com base no conjunto de dados de treinamento, 30,4% pertencem ao grupo setosa, 34,7% pertencem aos grupos versicolor e 34,7% pertencem aos grupos virginica. A primeira função discriminante é uma combinação linear das quatro variáveis. A porcentagem de separações alcançada pela primeira função discriminante é 98,55% e a segunda é 1,45%.
+
+Esses histogramas são baseados na primeira função discriminante. É evidente que não há sobreposições entre primeira e segunda e primeira e terceira espécies. Contudo, alguma sobreposição é observada entre a segunda e a terceira espécie. 
+
+
+``` {r estat12, warning=FALSE, message=FALSE}
+ldahist(data = p$x[,2], g = training$Species)
+```
+
+Os histogramas baseados na segunda função discriminante são sobrepostos, não bons.
+
+``` {r estat13, warning=FALSE, message=FALSE}
+ggord(linear, training$Species, ylim = c(-10, 10))
+```
+
+Os gráficos Biplot acima são baseados nas duas funções discriminantes. Setosa se separou muito claramente e alguma sobreposição foi observada entre Versicolor e Virginica.
+
+Com base nas setas, a largura e o comprimento da sépala explicaram mais para Setosa, a largura e o comprimento da pétala explicaram mais para Versicolor e Virginica.
+
+Finalmente, é possível ver as classificações corretas e classificações de erros.
+
+``` {r estat14, warning=FALSE, message=FALSE}
+p1 <- predict(linear, training)$class
+tab <- table(Predicted = p1, Actual = training$Species)
+tab
+
+sum(diag(tab))/sum(tab)
+
+p2 <- predict(linear, testing)$class
+tab1 <- table(Predicted = p2, Actual = testing$Species)
+tab1
+
+sum(diag(tab1))/sum(tab1)
+```
+
+No conjunto de dados de treinamento, a classificação correta total é 30+30+29=89. A acurácia do modelo é aproximadamente 100%.
+
+No conjunto de dados de teste, a classificação correta total é 20+19+20=59. A acurácia do modelo é aproximadamente 96,72%.
+
+Assim, o Histograma e o Biplot fornecem informações úteis para interpretações e, se não houver uma grande diferença nas matrizes de covariância do grupo, a análise discriminante linear funcionará muito bem. A Análise Discriminante Linear não é útil para resolver problemas não lineares.
+
+<br>
