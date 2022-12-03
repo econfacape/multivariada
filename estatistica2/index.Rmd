@@ -809,6 +809,9 @@ São métodos de partição de "n" objetos em "k" grupos. Os "k" grupos são pr�
 
 Não fornece dendograma. Isto porque se em algum passo do algoritmo dois elementos tiverem sido colocados num mesmo cluster, não necessariamente "estarão juntos" na partição final. Bom quando se tem um grande número de observações. O problema principal aqui não é o número de grupos e sim a melhor forma de alocar os elementos em k grupos. O método mais usado é o das k-médias (k-means).
 
+Resumidamente, o método das k-means é composto de quatro passos. No primeiro são selecionados k centróides para inicializar o processo de partição. Cada elemento do conjunto de dados é, então, comparado com cada centróide inicial, através de uma medida de distância que, em geral, é a Euclidiana. O elemento é alocado ao grupo cuja distância é a menor. No terceiro passo, recalcula-se os valores dos centróides para cada novo grupo formado. Com estes novos centróides, repete-se o passo 2. Isto deve ser repetido até que nenhuma realocação de elementos seja necessária. 
+
+
 ```  {r estat9, warning=FALSE, message=FALSE}
 cluster_kmeans <- elbow.plot(dados.pad)
 cluster_kmeans
@@ -820,6 +823,13 @@ kmeans1$centers
 #Plot dos Clusters
 clusplot(dados.pad, kmeans1$cluster, main="2D Representação da solução dos Clusters",
          color=TRUE, shade=TRUE, labels=2, lines=0)
+
+# Agrupamento usando o K-means - 2 forma
+fit.kmeans <- kmeans(dados.pad, 5) # Ajustar K de acordo com o gráfico
+fit.kmeans
+g_kmeans <- cluster_viz(dados.pad, as.factor(fit.kmeans$cluster), geom = "point",
+                  main = "Gráfico Cluster para o Método K-médias")
+plot(g_kmeans)
 ```
 
 <br>
