@@ -838,7 +838,7 @@ plot(g_kmeans)
 
 <br>
 
-A **Análise Discriminante Linear (LDA)** é uma técnica de Análise Multivariada usada com o objetivo de discriminar (separar, diferenciar) populações e/ou classificar observações em populações pré definidas. Para a sua aplicação, é necessário que os grupos para os quais cada elemento amostral pode ser classificado sejam pré-definidos, ou seja, conhecidos a priori considerando-se suas características gerais. Este conhecimento permite a elaboração de uma função matemática chamada de regra de classificação ou discriminação, que é utilizada para classificar novos elementos amostrais nos grupos já existentes. A definição dos grupos é feita de acordo com o problema de pesquisa e os objetivos do estudo.
+A **Análise Discriminante Linear (LDA)** é uma técnica de Análise Multivariada usada com o objetivo de discriminar (separar, diferenciar) populações e/ou classificar observações em populações pré definidas. Para a sua aplicação, é necessário que os grupos para os quais cada elemento amostral pode ser classificado sejam pré-definidos, ou seja, conhecidos a priori considerando-se suas características gerais. Este conhecimento permite a elaboração de uma função matemática chamada de regra de classificação ou discriminação, que é utilizada para classificar novos elementos amostrais nos grupos já existentes. A definição dos grupos é feita de acordo com o problema de pesquisa e os objetivos do estudo (MINGOTI, 2005).
 
 A LDA, originalmente desenvolvida por R A Fisher (1936) para classificar indivíduos em um dos dois grupos claramente definidos. Posteriormente, foi expandido para classificar os assuntos em mais de dois grupos. A LDA é uma técnica para reduzir o número de dimensões (ou seja, variáveis) em um conjunto de dados, mantendo o máximo de informações possível. Basicamente, ajuda a encontrar a combinação linear das variáveis originais que fornecem a melhor separação possível entre os grupos.
 
@@ -863,9 +863,148 @@ IV) Classificando os pacientes em diferentes categorias.
 
 Para aplicação da LDA deve-se dispor de uma amostra de cada uma das g populações e dados de p variáveis observadas para cada objeto das amostras que podem ser de tamanhos diferentes. Ao contrário da Análise de Cluster em que se procura formar grupos homogêneos na amostra, na LDA parte-se de um número pré-definido de grupos considerados amostras de diferentes populações.
 
-A base de dados utilizada para o exemplo é o da flor Iris ou conjunto de dados Iris de Fisher, um conjunto de dados multivariados introduzido pelo estatístico e biólogo britânico Ronald Fisher em seu artigo de 1936, "O uso de múltiplas medições em problemas taxonômicos, como um exemplo de análise discriminante linear". Às vezes, é chamado de conjunto de dados da íris de Anderson porque Edgar Anderson coletou os dados para quantificar a variação morfológica das flores da íris de três espécies relacionadas. Duas das três espécies foram coletadas na Península de Gaspé, "todas do mesmo campo, colhidas no mesmo dia e medidas ao mesmo tempo pela mesma pessoa com a mesma aparelho". O conjunto de dados consiste em 50 amostras de cada uma das três espécies de Iris ( Iris setosa, Iris virginica e Iris versicolor). Quatro variáveis foram medidas em cada amostra: o comprimento e a largura das sépalas e pétalas, em centímetros. Com base na combinação dessas quatro características, Fisher desenvolveu um modelo discriminante linear para distinguir as espécies umas das outras (Fonte: https://pt.wikipedia.org/wiki/Conjunto_de_dados_flor_Iris).
+Segundo Manly (1994), a forma mais simples de obter funções capazes de discriminar grupos é determinar combinações lineares $Y=a’X$ das variáveis X, as quais caracterizam os elementos de ambos os grupos, determinando coeficientes $a_1, a_2, ..., a_p$, que tornam máximas tanto a homogeneidade dentro de cada grupo quanto a heterogeneidade entre os grupos. Um dos métodos mais utilizados para determinar tais coeficientes é o método de Fisher. Sejam duas populações  $\pi_1$ e $\pi_2$ e p variáveis medidas nessas populações. Seja ainda,
+
+$\mu_1=$ vetor de médias de $\pi_1$
+
+$\mu_2=$ vetor de médias de $\pi_2$
+
+$\Sigma_1=$ matriz de var-cov estimada de $\pi_1$
+
+$\Sigma_2=$ matriz de var-cov estimada de $\pi_2$
+
+Na prática não se conhece os valores de $\mu_1$, $\mu_2$, $\Sigma_1$ e $\Sigma_2$. Tomando-se amostras de tamanhos $n_1$ de $\pi_1$ e $n_2$ de $\pi_2$, podem-se definir as estimativas amostrais dadas por 
+
+$\bar x_1=$ média amostral de $\pi_1$
+
+$\bar x_2=$ média amostral de $\pi_2$
+
+$S_1=$ var-cov de $\pi_1$
+
+$S_2=$ var-cov de $\pi_2$
+
+Definindo $S_1$ e $S_1$ como as matrizes de variância e covariância amostrais das variáveis X em  $\pi_1$ e $\pi_2$, respectivamente, pode-se obter uma matriz $S_p$  representativa da variância conjunta das variáveis, determinada a partir de uma média ponderada de $S_1$ e $S_1$, tal que: 
+
+$$
+S_p=\frac{(n_1-1)S_1+(n_2-1)S_2}{n_1+n_2-2}
+$$
+onde $S_p$ é a matriz de var-cov ponderada ou conjunta dos dados, um estimador não tendencioso de $\Sigma$. 
+
+O princípio básico do método de Fisher consiste em determinar uma ou mais combinações lineares das variáveis $x_1, x_2, x_3, \dots x_p$,dadas por:
+
+$$
+Y_i=a_1X_{1i}+a_2 X_{2i}+ \dots +a_p X_{pi}
+$$
+ou
+
+$$
+Y=a’X
+$$
+
+de forma que os valores de $Y_i$, com $i \in \pi_1$, sejam o máximo possível separados de $Y_i$, com $i \in \pi_2$. O método de Fisher, então, busca encontrar o vetor de $a’s$ que fornece a maior diferença (máxima diferença de médias) entre os grupos. 
+
+O número possível de funções discriminantes depende do número de grupos. Tendo g grupos pode-se calcular $g-1$ funções discriminantes. As funções são ordenadas em termos de importância de forma que a primeira é a que mais discrimina os grupos. A segunda é a que mais discrimina retirada a primeira e, assim, sucessivamente. Existe teste para saber quais são estatisticamente significativas. Com dois grupos só é possível calcular uma função discriminante.
+
+O cálculo dos coeficientes da função discriminante de Fisher inicia com a definição de separação entre as médias
+
+$$
+\frac{|\bar Y_1 - \bar Y_2|}{S_Y}
+$$
+quanto maior esta expressão mais distantes estarão as médias dos dois grupos. O objetivo é obter a combinação linear dos $X's$ que alcança a máxima separação entre as médias dos grupos. 
+
+Elevando a equação acima ao quadrado, tem-se
+
+
+$$
+\frac{(\bar Y_1 - \bar Y_2)^2}{S_Y^2} = \frac{distância \quad entre \quad as \quad médias \quad ao \quad quadrado}{variância \quad de \quad Y}
+$$
+
+Como $Y=a'X$, $\bar Y_1=a' \bar X_1$ e $\bar Y_2=a' \bar X_2$, de forma que a equação anterior pode ser reescrita como abaixo:
+
+$$
+\frac{(a' \bar X_1 - a' \bar X_2)^2}{a' S_p a}=\frac{[a' (\bar X_1 - \bar X_2)]^2}{a' S_p a}
+$$
+
+Pode-se mostrar que a combinação linear que maximiza essa razão é dada por 
+$$
+Y=a'X= (\bar X_1 - \bar X_2)'S_p^{-1}X
+$$
+
+e então, o vetor de coeficientes da função discriminante pode ser calculado por
+
+$$
+a'=(\bar X_1 - \bar X_2)'S_p^{-1}
+$$
+
+e o máximo é dado por 
+
+$$
+D^2=(\bar X_1 - \bar X_2)'S_p^{-1}(\bar X_1 - \bar X_2)
+$$
+
+que é igual a Distância de Mahalanobis entre as médias (centróides) das duas populações.
+
+Um teste F pode ser usado para comparar a média dos escores das duas populações onde
+
+$$
+F=\frac{n_1+n_2-p-1}{p(n_1+n_2-2)}T^2
+$$
+
+$$
+T^2=\frac{n_1n_2}{n_1+n_2}(\bar Y_1 - \bar Y_2)
+$$
+onde $\bar Y_1$ e $\bar Y_2$ são os escores da função discriminante quando aplicada aos vetores de médias amostrais das populações 1 e 2, respectivamente.
+
+<br>
+
+## Classificação
+
+<br>
+
+A função discriminante pode ser usada como instrumento de previsão, isto é, para classificar uma nova observação de fora da amostra nos grupos definidos. Seja $X_0$ uma nova observação cujo vetor de valores das variáveis é dado por
+
+$$
+X_0'=[X_{10} \quad X_{20} \quad \dots \quad X_{p0} ]
+$$
+
+com $X_0$, calcula-se o valor da função discriminante para a nova observação, dada por 
+
+$$
+Y_0=(\bar X_1 - \bar X_2)'S_p^{-1}X_0 =  a'X_0
+$$
+
+seja m o ponto médio entre as duas médias de Y, isto é
+
+$$
+m= \frac{1}{2} (\bar Y_1 + \bar Y_2)
+$$
+
+sendo $\bar Y_1=a' \bar X_1$ e $\bar Y_2=a' \bar X_2$.
+
+Pode-se mostrar que $E(Y_0| \pi_1) - m \geq 0$ e que $E(Y_0| \pi_2) - m < 0$. Assim, $E(Y_0| \pi_1) \geq m$ e que $E(Y_0| \pi_2)  < m$. Espera-se, então, que se $Y_0 \geq m$, a observação pertence à população $\pi_1$ e se $Y_0 < m$ a observação pertence à população $\pi_2$. Isto fornece uma regra de classificação dada por:
+
+Aloca-se $X_0$ e $\pi_1$, se $Y_0 \geq m$
+
+Aloca-se $X_0$ e $\pi_2$, se $Y_0 < m$
+
+O valor de m pode, também, ser definido por
+
+$$
+m=\frac{1}{2}[(\bar X_1 - \bar X_2)'S_p^{-1}(\bar X_1 - \bar X_2)]
+$$
+
+
+dada a pressuposição de que os dois grupos possuem a mesma variância populacional $(\Sigma_1=\Sigma_2=\Sigma)$
+
+<br>
 
 ## Análise Discriminante Linear no R
+
+<br>
+
+A base de dados utilizada para o exemplo é o da flor Iris ou conjunto de dados Iris de Fisher, um conjunto de dados multivariados introduzido pelo estatístico e biólogo britânico Ronald Fisher em seu artigo de 1936, "O uso de múltiplas medições em problemas taxonômicos, como um exemplo de análise discriminante linear". Às vezes, é chamado de conjunto de dados da íris de Anderson porque Edgar Anderson coletou os dados para quantificar a variação morfológica das flores da íris de três espécies relacionadas. Duas das três espécies foram coletadas na Península de Gaspé, "todas do mesmo campo, colhidas no mesmo dia e medidas ao mesmo tempo pela mesma pessoa com a mesma aparelho". O conjunto de dados consiste em 50 amostras de cada uma das três espécies de Iris ( Iris setosa, Iris virginica e Iris versicolor). Quatro variáveis foram medidas em cada amostra: o comprimento e a largura das sépalas e pétalas, em centímetros. Com base na combinação dessas quatro características, Fisher desenvolveu um modelo discriminante linear para distinguir as espécies umas das outras (Fonte: https://pt.wikipedia.org/wiki/Conjunto_de_dados_flor_Iris).
+
+<br>
 
 ```  {r estat10, warning=FALSE, message=FALSE}
 
